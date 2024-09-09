@@ -11,8 +11,8 @@ import Progress from "./components/CalorieCounter/Progress";
 import { calculateTDEE } from "./Data/CalculateTDEE";
 import CalorieControlButtons from "./components/CalorieCounter/CalorieControlButtons";
 import CalorieControlForm from "./components/CalorieCounter/CalorieControlForm";
-import axios from "axios";
 import AddFoodForm from "./components/CalorieCounter/AddFoodForm";
+import { FDCFoodData, FDCNutrients } from "./Data/FDCData";
 
 function App() {
   // Set the state for the page
@@ -107,6 +107,149 @@ function App() {
   const [showAutoCompleteForm, setShowAutoCompleteForm] = useState(false);
   const [availableOptions, setAvailableOptions] = useState<string[]>(options);
 
+  const foodTrackerTest: FDCFoodData[] = [
+    {
+      dataType: "Brand",
+      description: "Salmon",
+      fdcId: 0,
+      foodNutrients: [
+        {
+          number: "203",
+          name: "Protein",
+          amount: 14.8,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "204",
+          name: "Total lipid (fat)",
+          amount: 12.1,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "205",
+          name: "Carbohydrate, by difference",
+          amount: 10.2,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "208",
+          name: "Energy",
+          amount: 209,
+          unitName: "KCAL",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+      ],
+    },
+    {
+      dataType: "Brand",
+      description: "Tofu",
+      fdcId: 4,
+      foodNutrients: [
+        {
+          number: "203",
+          name: "Protein",
+          amount: 14.8,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "204",
+          name: "Total lipid (fat)",
+          amount: 12.1,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "205",
+          name: "Carbohydrate, by difference",
+          amount: 10.2,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "208",
+          name: "Energy",
+          amount: 214,
+          unitName: "KCAL",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+      ],
+    },
+    {
+      dataType: "Brand",
+      description: "Kimchi",
+      fdcId: 5,
+      foodNutrients: [
+        {
+          number: "203",
+          name: "Protein",
+          amount: 14.8,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "204",
+          name: "Total lipid (fat)",
+          amount: 12.1,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "205",
+          name: "Carbohydrate, by difference",
+          amount: 10.2,
+          unitName: "G",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+        {
+          number: "208",
+          name: "Energy",
+          amount: 216,
+          unitName: "KCAL",
+          derivationCode: "LCGA",
+          derivationDescription:
+            "Given by information provider as an approximate value per 100 unit measure",
+        },
+      ],
+    },
+  ];
+  const [foodTracker, setFoodTracker] =
+    useState<FDCFoodData[]>(foodTrackerTest);
+
+  const initialProgress = {
+    calories: 0,
+    proteins: 0,
+    fats: 0,
+    carbs: 0,
+  };
+
+  const [macroProgress, setMacroProgress] = useState(initialProgress);
+
   // Deafult to profile page if there is no user yet
   useEffect(() => {
     if (!user) {
@@ -137,7 +280,10 @@ function App() {
             }}
             userMacros={userDefinedMacros}
           ></DoughnutChart>
-          <Progress userGoals={userDefinedMacros}></Progress>
+          <Progress
+            userGoals={userDefinedMacros}
+            macroProgress={macroProgress}
+          ></Progress>
           <CalorieControlButtons
             userMacros={userDefinedMacros}
             updateUserDefinedGoals={(deltaMacro: number) => {
@@ -174,6 +320,11 @@ function App() {
             }
             availableOptions={availableOptions}
             setAvailableOptions={() => {}}
+            foodTracker={foodTracker}
+            setFoodTracker={() => {}}
+            setMacroProgress={(progress: typeof macroProgress) => {
+              setMacroProgress(progress);
+            }}
           ></AddFoodForm>
         </div>
       )}

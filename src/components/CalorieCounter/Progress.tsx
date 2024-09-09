@@ -6,11 +6,19 @@ interface UserMacroStats {
   goal: number;
 }
 
-interface ProgressProps {
-  userGoals: UserMacroStats;
+interface MacroProgress {
+  calories: number;
+  proteins: number;
+  fats: number;
+  carbs: number;
 }
 
-const Progress = ({ userGoals }: ProgressProps) => {
+interface ProgressProps {
+  userGoals: UserMacroStats;
+  macroProgress: MacroProgress;
+}
+
+const Progress = ({ userGoals, macroProgress }: ProgressProps) => {
   // Progress bar
   const userTDDEGoals = userGoals.goal;
 
@@ -21,15 +29,11 @@ const Progress = ({ userGoals }: ProgressProps) => {
     return bg;
   };
 
-  const macroProgress = {
-    calories: 0,
-    proteins: 0,
-    fats: 0,
-    carbs: 0,
-  };
-
-  macroProgress.calories = 2500;
   const calorieProgress = (macroProgress.calories / userTDDEGoals) * 100;
+  const proteinProgress = (macroProgress.proteins / userTDDEGoals) * 100;
+  const fatProgress = (macroProgress.fats / userTDDEGoals) * 100;
+  const carbsProgress = (macroProgress.carbs / userTDDEGoals) * 100;
+
   return (
     <div className="d-flex flex-column">
       <div
@@ -38,12 +42,18 @@ const Progress = ({ userGoals }: ProgressProps) => {
       >
         <div className="d-flex align-self-center" style={{ height: "2em" }}>
           Goal:{" "}
-          <p className={`text-${progressReport(calorieProgress)} mx-1`}>
+          <span className={`text-${progressReport(calorieProgress)} ms-1`}>
             {parseInt(calorieProgress.toFixed(0)) <= 100
               ? calorieProgress.toFixed(0)
               : "100"}
             %
-          </p>
+          </span>
+          <span className={`text-${progressReport(calorieProgress)} mx-1`}>
+            {" "}
+            {`(${macroProgress.calories.toFixed(2)}/${userTDDEGoals.toFixed(
+              2
+            )}) kcal`}{" "}
+          </span>
         </div>
         <button
           className="progress mx-2 mb-1"
@@ -75,17 +85,17 @@ const Progress = ({ userGoals }: ProgressProps) => {
           >
             <div className="d-flex align-self-center" style={{ height: "2em" }}>
               Protein:{" "}
-              <p className={`text-${progressReport(calorieProgress)} mx-1`}>
-                {parseInt(calorieProgress.toFixed(0)) <= 100
-                  ? calorieProgress.toFixed(0)
+              <p className={`text-${progressReport(proteinProgress)} mx-1`}>
+                {parseInt(proteinProgress.toFixed(0)) <= 100
+                  ? proteinProgress.toFixed(0)
                   : "100"}
                 %
               </p>
             </div>
             <div className="progress mx-2 mb-1" role="progressbar">
               <div
-                className={`progress-bar bg-${progressReport(calorieProgress)}`}
-                style={{ width: `${calorieProgress}%` }}
+                className={`progress-bar bg-${progressReport(proteinProgress)}`}
+                style={{ width: `${proteinProgress}%` }}
               ></div>
             </div>
           </div>
@@ -95,17 +105,17 @@ const Progress = ({ userGoals }: ProgressProps) => {
           >
             <div className="d-flex align-self-center" style={{ height: "2em" }}>
               Fat:{" "}
-              <p className={`text-${progressReport(calorieProgress)} mx-1`}>
-                {parseInt(calorieProgress.toFixed(0)) <= 100
-                  ? calorieProgress.toFixed(0)
+              <p className={`text-${progressReport(fatProgress)} mx-1`}>
+                {parseInt(fatProgress.toFixed(0)) <= 100
+                  ? fatProgress.toFixed(0)
                   : "100"}
                 %
               </p>
             </div>
             <div className="progress mx-2 mb-1" role="progressbar">
               <div
-                className={`progress-bar bg-${progressReport(calorieProgress)}`}
-                style={{ width: `${calorieProgress}%` }}
+                className={`progress-bar bg-${progressReport(fatProgress)}`}
+                style={{ width: `${fatProgress}%` }}
               ></div>
             </div>
           </div>
@@ -115,17 +125,17 @@ const Progress = ({ userGoals }: ProgressProps) => {
           >
             <div className="d-flex align-self-center" style={{ height: "2em" }}>
               Carbohydrate:{" "}
-              <p className={`text-${progressReport(calorieProgress)} mx-1`}>
-                {parseInt(calorieProgress.toFixed(0)) <= 100
-                  ? calorieProgress.toFixed(0)
+              <p className={`text-${progressReport(carbsProgress)} mx-1`}>
+                {parseInt(carbsProgress.toFixed(0)) <= 100
+                  ? carbsProgress.toFixed(0)
                   : "100"}
                 %
               </p>
             </div>
             <div className="progress mx-2 mb-1" role="progressbar">
               <div
-                className={`progress-bar bg-${progressReport(calorieProgress)}`}
-                style={{ width: `${calorieProgress}%` }}
+                className={`progress-bar bg-${progressReport(carbsProgress)}`}
+                style={{ width: `${carbsProgress}%` }}
               ></div>
             </div>
           </div>

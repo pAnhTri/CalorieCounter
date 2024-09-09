@@ -1,30 +1,13 @@
 import { useEffect, useRef } from "react";
 import searchIcon from "../../assets/search.svg";
+import { FDCFoodData, FDCNutrients } from "../../Data/FDCData";
+import { object } from "zod";
 
-interface ShortFDCFoodData {
-  fdcId: number;
-  description: string;
-}
-
-interface FDCNutrients {
-  number: number;
-  name: string;
-  amount: number;
-  unitName: string;
-  derivationCode?: string;
-  derivationDescription?: string;
-}
-
-interface FDCFoodData {
-  dataType: string;
-  description: string;
-  fdcId: number;
-  foodNutrients: FDCNutrients[];
-  publicationDate?: string;
-  brandOwner?: string;
-  gtinUpc?: string;
-  ndbNumber?: number;
-  foodCode?: string;
+interface MacroProgress {
+  calories: number;
+  proteins: number;
+  fats: number;
+  carbs: number;
 }
 
 interface AddFoodFormProps {
@@ -32,6 +15,9 @@ interface AddFoodFormProps {
   setShowAutoCompleteForm: (show: boolean) => void;
   availableOptions: string[];
   setAvailableOptions: () => void;
+  foodTracker: FDCFoodData[];
+  setFoodTracker: () => void;
+  setMacroProgress: (progress: MacroProgress) => void;
 }
 
 const AddFoodForm = ({
@@ -39,6 +25,9 @@ const AddFoodForm = ({
   setShowAutoCompleteForm,
   availableOptions,
   setAvailableOptions,
+  foodTracker,
+  setFoodTracker,
+  setMacroProgress,
 }: AddFoodFormProps) => {
   const searchRef = useRef(null);
   const autofillRef = useRef(null);
@@ -70,6 +59,80 @@ const AddFoodForm = ({
     }
   }, [showAutoCompleteForm]);
 
+  const sumCalories = () => {
+    const calories = foodTracker.flatMap((item) =>
+      item.foodNutrients.filter((nutrient) => nutrient.number === "208")
+    );
+
+    let sumOfCalories = 0;
+
+    for (const calorie of calories) {
+      sumOfCalories += calorie.amount;
+    }
+
+    return sumOfCalories;
+  };
+
+  const sumProtein = () => {
+    const proteins = foodTracker.flatMap((item) =>
+      item.foodNutrients.filter((nutrient) => nutrient.number === "203")
+    );
+
+    let sumOfProtein = 0;
+
+    for (const protein of proteins) {
+      sumOfProtein += protein.amount;
+    }
+
+    return sumOfProtein;
+  };
+
+  const sumFat = () => {
+    const fats = foodTracker.flatMap((item) =>
+      item.foodNutrients.filter((nutrient) => nutrient.number === "204")
+    );
+
+    let sumOfFats = 0;
+
+    for (const fat of fats) {
+      sumOfFats += fat.amount;
+    }
+
+    return sumOfFats;
+  };
+
+  const sumCarbs = () => {
+    const carbs = foodTracker.flatMap((item) =>
+      item.foodNutrients.filter((nutrient) => nutrient.number === "205")
+    );
+
+    let sumOfCarbs = 0;
+
+    for (const carb of carbs) {
+      sumOfCarbs += carb.amount;
+    }
+
+    return sumOfCarbs;
+  };
+
+  useEffect(() => {
+    const sumOfCalories = sumCalories();
+    const sumOfProtein = sumProtein();
+    const sumOfFats = sumFat();
+    const sumOfCarbs = sumCarbs();
+
+    const newMacroProgess = {
+      calories: sumOfCalories,
+      proteins: sumOfProtein,
+      fats: sumOfFats,
+      carbs: sumOfCarbs,
+    };
+
+    return () => {
+      setMacroProgress(newMacroProgess);
+    };
+  }, [foodTracker]);
+
   return (
     <div
       className="d-flex flex-column"
@@ -84,7 +147,7 @@ const AddFoodForm = ({
           style={{
             lineHeight: "37.6px",
             maxHeight: "37.6px",
-            fontSize: "xx-large",
+            fontSize: "x-large",
           }}
         >
           Food Tracker
@@ -179,21 +242,14 @@ const AddFoodForm = ({
           maxWidth: "625px",
         }}
       >
-        {/* <div
-          style={{
-            width: "100%",
-            height: "50px",
-            border: "1px solid",
-            borderStyle: "none none solid",
-          }}
-        ></div> */}
-
         <ul className="list-group">
-          <li className="list-group-item">An item</li>
-          <li className="list-group-item">A second item</li>
-          <li className="list-group-item">A third item</li>
-          <li className="list-group-item">A fourth item</li>
-          <li className="list-group-item">And a fifth one</li>
+          {foodTracker.map((foodItem) => {
+            return (
+              <li key={foodItem.fdcId} className="list-group-item">
+                {foodItem.description}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
