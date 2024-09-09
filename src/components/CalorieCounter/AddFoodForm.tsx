@@ -71,82 +71,131 @@ const AddFoodForm = ({
   }, [showAutoCompleteForm]);
 
   return (
-    <div>
-      <form>
-        <label className="form-label" htmlFor="autoCompleteSearch"></label>
-        <div
-          ref={searchRef}
+    <div
+      className="d-flex flex-column"
+      style={{ maxWidth: "625px", margin: "0 auto" }}
+    >
+      <div
+        className="d-flex justify-content-between bg-body-tertiary p-2"
+        style={{ borderRadius: "10px 10px 0 0", border: "1px solid" }}
+      >
+        <span
+          className="mb-0 ms-2"
           style={{
-            maxWidth: "236.7px",
+            lineHeight: "37.6px",
+            maxHeight: "37.6px",
+            fontSize: "xx-large",
           }}
         >
-          <div style={{ display: "flex" }}>
-            <div
-              style={{
-                maxWidth: "200px",
-              }}
-            >
-              <input
-                ref={autofillRef}
-                onClick={() => {
-                  setShowAutoCompleteForm(true);
-                }}
-                className="form-control"
+          Food Tracker
+        </span>
+
+        <form className="me-2" role="search">
+          <div
+            ref={searchRef}
+            style={{
+              maxWidth: "236.7px",
+              position: "relative",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <div
                 style={{
-                  borderTopRightRadius: "0px",
-                  borderBottomRightRadius: "0px",
+                  maxWidth: "200px",
                 }}
-                id="autoCompleteSearch"
-                type="text"
-              />
+              >
+                <input
+                  ref={autofillRef}
+                  onClick={() => {
+                    setShowAutoCompleteForm(true);
+                  }}
+                  className="form-control"
+                  style={{
+                    borderTopRightRadius: "0px",
+                    borderBottomRightRadius: "0px",
+                  }}
+                  id="autoCompleteSearch"
+                  type="text"
+                />
+              </div>
+              <button
+                onClick={() => {}}
+                type="button"
+                className="btn btn-primary"
+                style={{
+                  backgroundImage: `url(${searchIcon})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  borderTopLeftRadius: "0px",
+                  borderBottomLeftRadius: "0px",
+                  width: "37.6px",
+                  height: "37.6px",
+                }}
+              ></button>
             </div>
-            <button
-              onClick={() => {}}
-              type="button"
-              className="btn btn-primary"
-              style={{
-                backgroundImage: `url(${searchIcon})`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                borderTopLeftRadius: "0px",
-                borderBottomLeftRadius: "0px",
-                width: "37.6px",
-                height: "37.6px",
-              }}
-            ></button>
+            {showAutoCompleteForm && (
+              <div
+                ref={autocompleteBoxRef}
+                className="overflow-auto"
+                style={{
+                  maxHeight: "calc(25.6px * 3)",
+                  width: "100%",
+                  maxWidth: "200px",
+                  position: "absolute",
+                }}
+              >
+                {availableOptions.map((value) => {
+                  return (
+                    <div
+                      key={value}
+                      onClick={(event) => {
+                        event.currentTarget.style.background =
+                          event.currentTarget.style.background === "blue"
+                            ? "white"
+                            : "blue";
+                        if (autofillRef.current) {
+                          const autoFillSearch: HTMLInputElement =
+                            autofillRef.current;
+                          autoFillSearch.value =
+                            event.currentTarget.textContent ?? "";
+                        }
+                      }}
+                      style={{ border: "1px solid" }}
+                    >
+                      {value}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          {showAutoCompleteForm && (
-            <div
-              ref={autocompleteBoxRef}
-              className="overflow-auto"
-              style={{ maxHeight: "calc(25.6px * 3)", maxWidth: "200px" }}
-            >
-              {availableOptions.map((value) => {
-                return (
-                  <div
-                    key={value}
-                    onClick={(event) => {
-                      event.currentTarget.style.background =
-                        event.currentTarget.style.background === "blue"
-                          ? "white"
-                          : "blue";
-                      if (autofillRef.current) {
-                        const autoFillSearch: HTMLInputElement =
-                          autofillRef.current;
-                        autoFillSearch.value =
-                          event.currentTarget.textContent ?? "";
-                      }
-                    }}
-                    style={{ border: "1px solid" }}
-                  >
-                    {value}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </form>
+        </form>
+      </div>
+      <div
+        style={{
+          background: "#c3c3c345",
+          border: "1px solid",
+          borderTop: "none",
+          maxWidth: "625px",
+        }}
+      >
+        {/* <div
+          style={{
+            width: "100%",
+            height: "50px",
+            border: "1px solid",
+            borderStyle: "none none solid",
+          }}
+        ></div> */}
+
+        <ul className="list-group">
+          <li className="list-group-item">An item</li>
+          <li className="list-group-item">A second item</li>
+          <li className="list-group-item">A third item</li>
+          <li className="list-group-item">A fourth item</li>
+          <li className="list-group-item">And a fifth one</li>
+        </ul>
+      </div>
     </div>
   );
 };
