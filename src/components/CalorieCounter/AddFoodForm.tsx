@@ -1,7 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import searchIcon from "../../assets/search.svg";
-import { FDCFoodData, FDCNutrients } from "../../Data/FDCData";
-import { object } from "zod";
+import { FDCFoodData } from "../../Data/FDCData";
 
 interface MacroProgress {
   calories: number;
@@ -11,8 +10,8 @@ interface MacroProgress {
 }
 
 interface AddFoodFormProps {
-  showAutoCompleteForm: boolean;
-  setShowAutoCompleteForm: (show: boolean) => void;
+  showSearchModal: boolean;
+  setShowSearchModal: () => void;
   availableOptions: string[];
   setAvailableOptions: () => void;
   foodTracker: FDCFoodData[];
@@ -21,44 +20,14 @@ interface AddFoodFormProps {
 }
 
 const AddFoodForm = ({
-  showAutoCompleteForm,
-  setShowAutoCompleteForm,
+  showSearchModal,
+  setShowSearchModal,
   availableOptions,
   setAvailableOptions,
   foodTracker,
   setFoodTracker,
   setMacroProgress,
 }: AddFoodFormProps) => {
-  const searchRef = useRef(null);
-  const autofillRef = useRef(null);
-  const autocompleteBoxRef = useRef(null);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    // Check if the click is outside the component
-    if (searchRef.current) {
-      const searchComponent: any = searchRef.current;
-
-      if (!searchComponent.contains(event.target as Node)) {
-        setShowAutoCompleteForm(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (autocompleteBoxRef.current) {
-      const autocompleteBox: HTMLDivElement = autocompleteBoxRef.current;
-      autocompleteBox.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [showAutoCompleteForm]);
-
   const sumCalories = () => {
     const calories = foodTracker.flatMap((item) =>
       item.foodNutrients.filter((nutrient) => nutrient.number === "208")
@@ -179,7 +148,6 @@ const AddFoodForm = ({
 
         <form className="me-2" role="search">
           <div
-            ref={searchRef}
             style={{
               maxWidth: "236.7px",
               position: "relative",
@@ -192,9 +160,8 @@ const AddFoodForm = ({
                 }}
               >
                 <input
-                  ref={autofillRef}
                   onClick={() => {
-                    setShowAutoCompleteForm(true);
+                    setShowSearchModal();
                   }}
                   className="form-control"
                   style={{
@@ -220,42 +187,6 @@ const AddFoodForm = ({
                 }}
               ></button>
             </div>
-            {showAutoCompleteForm && (
-              <div
-                ref={autocompleteBoxRef}
-                className="overflow-auto"
-                style={{
-                  maxHeight: "calc(25.6px * 3)",
-                  width: "100%",
-                  position: "absolute",
-                  zIndex: "1",
-                  background: "white",
-                }}
-              >
-                {availableOptions.map((value) => {
-                  return (
-                    <div
-                      key={value}
-                      onClick={(event) => {
-                        event.currentTarget.style.background =
-                          event.currentTarget.style.background === "blue"
-                            ? "white"
-                            : "blue";
-                        if (autofillRef.current) {
-                          const autoFillSearch: HTMLInputElement =
-                            autofillRef.current;
-                          autoFillSearch.value =
-                            event.currentTarget.textContent ?? "";
-                        }
-                      }}
-                      style={{ border: "1px solid" }}
-                    >
-                      {value}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
         </form>
       </div>

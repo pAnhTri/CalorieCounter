@@ -13,6 +13,7 @@ import CalorieControlButtons from "./components/CalorieCounter/CalorieControlBut
 import CalorieControlForm from "./components/CalorieCounter/CalorieControlForm";
 import AddFoodForm from "./components/CalorieCounter/AddFoodForm";
 import { FDCFoodData, FDCNutrients } from "./Data/FDCData";
+import SearchModal from "./components/CalorieCounter/SearchModal";
 
 function App() {
   // Set the state for the page
@@ -112,8 +113,10 @@ function App() {
 
   // Add Food
   const options = ["Aaa", "Bbb", "CCC", "Dda", "Ddb", "Abc", "asd", "Awq"];
-  const [showAutoCompleteForm, setShowAutoCompleteForm] = useState(false);
   const [availableOptions, setAvailableOptions] = useState<string[]>(options);
+
+  // Search Modal
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const foodTrackerTest: FDCFoodData[] = [
     {
@@ -322,10 +325,10 @@ function App() {
             ></CalorieControlForm>
           )}
           <AddFoodForm
-            showAutoCompleteForm={showAutoCompleteForm}
-            setShowAutoCompleteForm={(show: boolean) =>
-              setShowAutoCompleteForm(show)
-            }
+            showSearchModal={showSearchModal}
+            setShowSearchModal={() => {
+              setShowSearchModal(true);
+            }}
             availableOptions={availableOptions}
             setAvailableOptions={() => {}}
             foodTracker={foodTracker}
@@ -334,6 +337,12 @@ function App() {
               setMacroProgress(progress);
             }}
           ></AddFoodForm>
+          <SearchModal
+            showSearchModal={showSearchModal}
+            setShowSearchModal={() => {
+              setShowSearchModal(false);
+            }}
+          ></SearchModal>
         </div>
       )}
 
