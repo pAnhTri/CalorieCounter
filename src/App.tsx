@@ -36,7 +36,22 @@ function App() {
     setUser(updatedUser);
   };
 
-  const userTDDE = user ? calculateTDEE(user) : 0;
+  const userMacro = {
+    protein: 0.2,
+    fat: 0.2,
+    carbs: 0.6,
+    tdde: 0,
+    goal: 0,
+  };
+
+  useEffect(() => {
+    const userTDDE = user ? calculateTDEE(user) : 0;
+    setUserDefinedMacros({
+      ...userDefinedMacros,
+      tdde: userTDDE,
+      goal: userTDDE,
+    });
+  }, [user]);
 
   //Initial ratio
   /*
@@ -44,13 +59,6 @@ function App() {
    * Fat: 20% -> 1g = 9kcal
    * Carbs: 60% -> 1g = 4kcal
    */
-  const userMacro = {
-    protein: 0.2,
-    fat: 0.2,
-    carbs: 0.6,
-    tdde: userTDDE,
-    goal: userTDDE,
-  };
 
   const [userDefinedMacros, setUserDefinedMacros] = useState(() => {
     const savedMacros = localStorage.getItem("userMacroGoals");
