@@ -133,6 +133,30 @@ const AddFoodForm = ({
     };
   }, [foodTracker]);
 
+  const extractNutritionalValue = () => {
+    const workableNutrients = foodTracker.map((innerArray) => {
+      const filteredNutrients = innerArray.foodNutrients.filter((nutrient) => {
+        return (
+          nutrient.number === "203" ||
+          nutrient.number === "204" ||
+          nutrient.number === "205" ||
+          nutrient.number === "208"
+        );
+      });
+
+      return {
+        calories: filteredNutrients[3].amount,
+        protein: filteredNutrients[0].amount,
+        fat: filteredNutrients[1].amount,
+        carbs: filteredNutrients[2].amount,
+      };
+    });
+
+    return workableNutrients;
+  };
+
+  const workAbleNutrients = extractNutritionalValue();
+
   return (
     <div
       className="d-flex flex-column"
@@ -203,8 +227,9 @@ const AddFoodForm = ({
                 style={{
                   maxHeight: "calc(25.6px * 3)",
                   width: "100%",
-                  maxWidth: "200px",
                   position: "absolute",
+                  zIndex: "1",
+                  background: "white",
                 }}
               >
                 {availableOptions.map((value) => {
@@ -243,10 +268,67 @@ const AddFoodForm = ({
         }}
       >
         <ul className="list-group">
-          {foodTracker.map((foodItem) => {
+          {foodTracker.map((foodItem, index) => {
             return (
-              <li key={foodItem.fdcId} className="list-group-item">
-                {foodItem.description}
+              <li
+                key={foodItem.fdcId}
+                className="list-group-item d-flex justify-content-between"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <span
+                  style={{
+                    width: "100px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {foodItem.description}
+                </span>
+                <span
+                  style={{
+                    maxWidth: "150px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {`Calories: ${workAbleNutrients[index].calories.toFixed(
+                    2
+                  )}kcal`}
+                </span>
+                <span
+                  style={{
+                    maxWidth: "150px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {`Protein: ${workAbleNutrients[index].protein.toFixed(2)}g`}
+                </span>
+                <span
+                  style={{
+                    maxWidth: "100px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {`Fat: ${workAbleNutrients[index].fat.toFixed(2)}g`}
+                </span>
+                <span
+                  style={{
+                    maxWidth: "100px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)}g`}
+                </span>
               </li>
             );
           })}
