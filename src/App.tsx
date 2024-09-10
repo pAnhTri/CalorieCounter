@@ -36,7 +36,7 @@ function App() {
     setUser(updatedUser);
   };
 
-  const userTDDE = calculateTDEE(user);
+  const userTDDE = user ? calculateTDEE(user) : 0;
 
   //Initial ratio
   /*
