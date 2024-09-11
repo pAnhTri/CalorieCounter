@@ -1,18 +1,32 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import searchIcon from "../../assets/search.svg";
 import * as bootstrap from "bootstrap";
+import { ShortFDCFoodData } from "../../Data/FDCData";
+import { extractNutritionalValue } from "../../Data/ExtractMacroNutrients";
 
 interface SearchModalProps {
   showSearchModal: boolean;
   setShowSearchModal: () => void;
+  availableOptions: ShortFDCFoodData[];
+  setAvailableOptions: () => void;
 }
 
 const SearchModal = ({
   showSearchModal,
   setShowSearchModal,
+  availableOptions,
+  setAvailableOptions,
 }: SearchModalProps) => {
+  const searchRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const searchModalEventListener = document.getElementById("searchModal");
-    searchModalEventListener?.addEventListener("hidden.bs.modal", () => {
+    searchModalEventListener?.addEventListener("shown.bs.modal", () => {
+      if (searchRef.current) {
+        searchRef.current.focus();
+      }
+    });
+    searchModalEventListener?.addEventListener("hide.bs.modal", () => {
       setShowSearchModal();
     });
   }, []);
@@ -23,22 +37,86 @@ const SearchModal = ({
     if (showSearchModal) searchModal.show();
   }, [showSearchModal]);
 
+  const workableNutrients = extractNutritionalValue(availableOptions);
+
   return (
     <div>
       <div className="modal fade" id="searchModal" tabIndex={-1}>
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="searchModalLabel">
-                Search Food
-              </h1>
-              <button
-                className="btn btn-close"
-                type="button"
-                data-bs-dismiss="modal"
-              ></button>
+            <div className="modal-header justify-content-center">
+              <div style={{ display: "contents" }}>
+                <form>
+                  <input
+                    ref={searchRef}
+                    type="text"
+                    className="form-control"
+                    placeholder="Search Food"
+                    style={{
+                      borderRadius:
+                        "var(--bs-border-radius) 0 0 var(--bs-border-radius)",
+                    }}
+                  />
+                </form>
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  style={{
+                    backgroundImage: `url(${searchIcon})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    borderRadius:
+                      "0 var(--bs-border-radius) var(--bs-border-radius) 0",
+                    aspectRatio: "1/1",
+                    alignSelf: "stretch",
+                  }}
+                ></button>
+              </div>
             </div>
-            <div className="modal-body">Body</div>
+            <div className="modal-body">
+              <div className="container">
+                {availableOptions.map((foodItem, index) => {
+                  return (
+                    <div
+                      className="row border-bottom"
+                      onClick={(event) => {
+                        const color = () =>
+                          event.currentTarget.style.background === "aquamarine"
+                            ? "white"
+                            : "aquamarine";
+                        event.currentTarget.style.background = color();
+                      }}
+                      key={foodItem.fdcId}
+                    >
+                      <div className="col">{foodItem.description}</div>
+                      <div className="col">
+                        {`Serving: ${workableNutrients[
+                          index
+                        ].servingSize.toFixed(2)} g`}
+                      </div>
+                      <div className="col">
+                        {`Calories: ${workableNutrients[index].calories.toFixed(
+                          2
+                        )} kcal`}
+                      </div>
+                      <div className="col">
+                        {`Protein: ${workableNutrients[index].protein.toFixed(
+                          2
+                        )} g`}
+                      </div>
+                      <div className="col">
+                        {`Fat: ${workableNutrients[index].fat.toFixed(2)} g`}
+                      </div>
+                      <div className="col">
+                        {`Carbs: ${workableNutrients[index].carbs.toFixed(
+                          2
+                        )} g`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
             <div className="modal-footer">
               {" "}
               <button

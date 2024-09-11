@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import searchIcon from "../../assets/search.svg";
-import { FDCFoodData } from "../../Data/FDCData";
+import { ShortFDCFoodData } from "../../Data/FDCData";
+import { extractNutritionalValue } from "../../Data/ExtractMacroNutrients";
 
 interface MacroProgress {
   calories: number;
@@ -12,9 +13,7 @@ interface MacroProgress {
 interface AddFoodFormProps {
   showSearchModal: boolean;
   setShowSearchModal: () => void;
-  availableOptions: string[];
-  setAvailableOptions: () => void;
-  foodTracker: FDCFoodData[];
+  foodTracker: ShortFDCFoodData[];
   setFoodTracker: () => void;
   setMacroProgress: (progress: MacroProgress) => void;
 }
@@ -22,21 +21,21 @@ interface AddFoodFormProps {
 const AddFoodForm = ({
   showSearchModal,
   setShowSearchModal,
-  availableOptions,
-  setAvailableOptions,
   foodTracker,
   setFoodTracker,
   setMacroProgress,
 }: AddFoodFormProps) => {
   const sumCalories = () => {
     const calories = foodTracker.flatMap((item) =>
-      item.foodNutrients.filter((nutrient) => nutrient.number === "208")
+      item.foodNutrients?.filter((nutrient) => nutrient.number === "208")
     );
 
     let sumOfCalories = 0;
 
     for (const calorie of calories) {
-      sumOfCalories += calorie.amount;
+      if (calorie) {
+        sumOfCalories += calorie.amount ? calorie.amount : 0;
+      }
     }
 
     return sumOfCalories;
@@ -44,13 +43,15 @@ const AddFoodForm = ({
 
   const sumProtein = () => {
     const proteins = foodTracker.flatMap((item) =>
-      item.foodNutrients.filter((nutrient) => nutrient.number === "203")
+      item.foodNutrients?.filter((nutrient) => nutrient.number === "203")
     );
 
     let sumOfProtein = 0;
 
     for (const protein of proteins) {
-      sumOfProtein += protein.amount;
+      if (protein) {
+        sumOfProtein += protein.amount ? protein.amount : 0;
+      }
     }
 
     return sumOfProtein;
@@ -58,13 +59,15 @@ const AddFoodForm = ({
 
   const sumFat = () => {
     const fats = foodTracker.flatMap((item) =>
-      item.foodNutrients.filter((nutrient) => nutrient.number === "204")
+      item.foodNutrients?.filter((nutrient) => nutrient.number === "204")
     );
 
     let sumOfFats = 0;
 
     for (const fat of fats) {
-      sumOfFats += fat.amount;
+      if (fat) {
+        sumOfFats += fat.amount ? fat.amount : 0;
+      }
     }
 
     return sumOfFats;
@@ -72,13 +75,15 @@ const AddFoodForm = ({
 
   const sumCarbs = () => {
     const carbs = foodTracker.flatMap((item) =>
-      item.foodNutrients.filter((nutrient) => nutrient.number === "205")
+      item.foodNutrients?.filter((nutrient) => nutrient.number === "205")
     );
 
     let sumOfCarbs = 0;
 
     for (const carb of carbs) {
-      sumOfCarbs += carb.amount;
+      if (carb) {
+        sumOfCarbs += carb.amount ? carb.amount : 0;
+      }
     }
 
     return sumOfCarbs;
@@ -102,29 +107,7 @@ const AddFoodForm = ({
     };
   }, [foodTracker]);
 
-  const extractNutritionalValue = () => {
-    const workableNutrients = foodTracker.map((innerArray) => {
-      const filteredNutrients = innerArray.foodNutrients.filter((nutrient) => {
-        return (
-          nutrient.number === "203" ||
-          nutrient.number === "204" ||
-          nutrient.number === "205" ||
-          nutrient.number === "208"
-        );
-      });
-
-      return {
-        calories: filteredNutrients[3].amount,
-        protein: filteredNutrients[0].amount,
-        fat: filteredNutrients[1].amount,
-        carbs: filteredNutrients[2].amount,
-      };
-    });
-
-    return workableNutrients;
-  };
-
-  const workAbleNutrients = extractNutritionalValue();
+  const workAbleNutrients = extractNutritionalValue(foodTracker);
 
   return (
     <div
@@ -198,72 +181,34 @@ const AddFoodForm = ({
           maxWidth: "625px",
         }}
       >
-        <ul className="list-group">
+        <div className="container">
           {foodTracker.map((foodItem, index) => {
             return (
-              <li
-                key={foodItem.fdcId}
-                className="list-group-item d-flex justify-content-between"
-                style={{
-                  width: "100%",
-                }}
-              >
-                <span
-                  style={{
-                    width: "100px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {foodItem.description}
-                </span>
-                <span
-                  style={{
-                    maxWidth: "150px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
+              <div className="row border-bottom" key={foodItem.fdcId}>
+                <div className="col">{foodItem.description}</div>
+                <div className="col">
+                  {`Serving: ${workAbleNutrients[index].servingSize.toFixed(
+                    2
+                  )} g`}
+                </div>
+                <div className="col">
                   {`Calories: ${workAbleNutrients[index].calories.toFixed(
                     2
-                  )}kcal`}
-                </span>
-                <span
-                  style={{
-                    maxWidth: "150px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {`Protein: ${workAbleNutrients[index].protein.toFixed(2)}g`}
-                </span>
-                <span
-                  style={{
-                    maxWidth: "100px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {`Fat: ${workAbleNutrients[index].fat.toFixed(2)}g`}
-                </span>
-                <span
-                  style={{
-                    maxWidth: "100px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)}g`}
-                </span>
-              </li>
+                  )} kcal`}
+                </div>
+                <div className="col">
+                  {`Protein: ${workAbleNutrients[index].protein.toFixed(2)} g`}
+                </div>
+                <div className="col">
+                  {`Fat: ${workAbleNutrients[index].fat.toFixed(2)} g`}
+                </div>
+                <div className="col">
+                  {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)} g`}
+                </div>
+              </div>
             );
           })}
-        </ul>
+        </div>
       </div>
     </div>
   );

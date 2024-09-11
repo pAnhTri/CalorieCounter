@@ -12,7 +12,7 @@ import { calculateTDEE } from "./Data/CalculateTDEE";
 import CalorieControlButtons from "./components/CalorieCounter/CalorieControlButtons";
 import CalorieControlForm from "./components/CalorieCounter/CalorieControlForm";
 import AddFoodForm from "./components/CalorieCounter/AddFoodForm";
-import { FDCFoodData, FDCNutrients } from "./Data/FDCData";
+import { ShortFDCFoodData } from "./Data/FDCData";
 import SearchModal from "./components/CalorieCounter/SearchModal";
 
 function App() {
@@ -112,15 +112,8 @@ function App() {
   const [showMacroControl, setShowMacroControl] = useState(false);
 
   // Add Food
-  const options = ["Aaa", "Bbb", "CCC", "Dda", "Ddb", "Abc", "asd", "Awq"];
-  const [availableOptions, setAvailableOptions] = useState<string[]>(options);
-
-  // Search Modal
-  const [showSearchModal, setShowSearchModal] = useState(false);
-
-  const foodTrackerTest: FDCFoodData[] = [
+  const foodTrackerTest: ShortFDCFoodData[] = [
     {
-      dataType: "Brand",
       description: "Salmon",
       fdcId: 0,
       foodNutrients: [
@@ -163,7 +156,6 @@ function App() {
       ],
     },
     {
-      dataType: "Brand",
       description: "Tofu",
       fdcId: 4,
       foodNutrients: [
@@ -206,7 +198,6 @@ function App() {
       ],
     },
     {
-      dataType: "Brand",
       description: "Kimchi",
       fdcId: 5,
       foodNutrients: [
@@ -249,8 +240,15 @@ function App() {
       ],
     },
   ];
+
+  const [availableOptions, setAvailableOptions] =
+    useState<ShortFDCFoodData[]>(foodTrackerTest);
+
+  // Search Modal
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
   const [foodTracker, setFoodTracker] =
-    useState<FDCFoodData[]>(foodTrackerTest);
+    useState<ShortFDCFoodData[]>(foodTrackerTest);
 
   const initialProgress = {
     calories: 0,
@@ -329,8 +327,6 @@ function App() {
             setShowSearchModal={() => {
               setShowSearchModal(true);
             }}
-            availableOptions={availableOptions}
-            setAvailableOptions={() => {}}
             foodTracker={foodTracker}
             setFoodTracker={() => {}}
             setMacroProgress={(progress: typeof macroProgress) => {
@@ -342,6 +338,8 @@ function App() {
             setShowSearchModal={() => {
               setShowSearchModal(false);
             }}
+            availableOptions={availableOptions}
+            setAvailableOptions={() => {}} //WIP
           ></SearchModal>
         </div>
       )}
