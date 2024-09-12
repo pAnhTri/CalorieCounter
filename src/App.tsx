@@ -333,6 +333,7 @@ function App() {
             }}
             foodTracker={foodTracker}
             setFoodTracker={setFoodTracker}
+            setLookedUpList={setLookedUpList}
             setMacroProgress={(progress: typeof macroProgress) => {
               setMacroProgress(progress);
             }}

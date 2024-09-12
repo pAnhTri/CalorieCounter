@@ -14,6 +14,7 @@ interface AddFoodFormProps {
   setShowSearchModal: () => void;
   foodTracker: ShortFDCFoodData[];
   setFoodTracker: (list: ShortFDCFoodData[]) => void;
+  setLookedUpList: (list: ShortFDCFoodData[]) => void;
   setMacroProgress: (progress: MacroProgress) => void;
 }
 
@@ -21,6 +22,7 @@ const AddFoodForm = ({
   setShowSearchModal,
   foodTracker,
   setFoodTracker,
+  setLookedUpList,
   setMacroProgress,
 }: AddFoodFormProps) => {
   const sumCalories = () => {
@@ -108,6 +110,7 @@ const AddFoodForm = ({
   const removeFoodItem = (foodItem: ShortFDCFoodData) => {
     const newList = foodTracker.filter((item) => item !== foodItem);
     setFoodTracker(newList);
+    setLookedUpList(newList);
   };
 
   return (
