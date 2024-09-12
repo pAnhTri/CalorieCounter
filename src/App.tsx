@@ -247,8 +247,15 @@ function App() {
   // Search Modal
   const [showSearchModal, setShowSearchModal] = useState(false);
 
-  const [foodTracker, setFoodTracker] =
-    useState<ShortFDCFoodData[]>(foodTrackerTest);
+  const [foodTracker, setFoodTracker] = useState<ShortFDCFoodData[]>([]);
+  const [lookedUpFoodList, setLookedUpList] = useState<ShortFDCFoodData[]>([]);
+
+  const addItemsToFoodTracker = () => {
+    const mergedList = [...new Set([...foodTracker, ...lookedUpFoodList])];
+    setFoodTracker(mergedList);
+    // Reset looked up items
+    setLookedUpList([]);
+  };
 
   const initialProgress = {
     calories: 0,
@@ -323,12 +330,10 @@ function App() {
             ></CalorieControlForm>
           )}
           <AddFoodForm
-            showSearchModal={showSearchModal}
             setShowSearchModal={() => {
               setShowSearchModal(true);
             }}
             foodTracker={foodTracker}
-            setFoodTracker={() => {}}
             setMacroProgress={(progress: typeof macroProgress) => {
               setMacroProgress(progress);
             }}
@@ -340,6 +345,9 @@ function App() {
             }}
             availableOptions={availableOptions}
             setAvailableOptions={() => {}} //WIP
+            lookedUpFoodList={lookedUpFoodList}
+            setLookedUpList={setLookedUpList}
+            setFoodTracker={addItemsToFoodTracker}
           ></SearchModal>
         </div>
       )}

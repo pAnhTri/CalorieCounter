@@ -11,18 +11,14 @@ interface MacroProgress {
 }
 
 interface AddFoodFormProps {
-  showSearchModal: boolean;
   setShowSearchModal: () => void;
   foodTracker: ShortFDCFoodData[];
-  setFoodTracker: () => void;
   setMacroProgress: (progress: MacroProgress) => void;
 }
 
 const AddFoodForm = ({
-  showSearchModal,
   setShowSearchModal,
   foodTracker,
-  setFoodTracker,
   setMacroProgress,
 }: AddFoodFormProps) => {
   const sumCalories = () => {
@@ -102,9 +98,7 @@ const AddFoodForm = ({
       carbs: sumOfCarbs,
     };
 
-    return () => {
-      setMacroProgress(newMacroProgess);
-    };
+    setMacroProgress(newMacroProgess);
   }, [foodTracker]);
 
   const workAbleNutrients = extractNutritionalValue(foodTracker);
@@ -153,6 +147,7 @@ const AddFoodForm = ({
                   }}
                   id="autoCompleteSearch"
                   type="text"
+                  placeholder="Search Food to Add"
                 />
               </div>
               <button

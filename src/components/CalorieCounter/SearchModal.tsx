@@ -9,6 +9,9 @@ interface SearchModalProps {
   setShowSearchModal: () => void;
   availableOptions: ShortFDCFoodData[];
   setAvailableOptions: () => void;
+  lookedUpFoodList: ShortFDCFoodData[];
+  setLookedUpList: (list: ShortFDCFoodData[]) => void;
+  setFoodTracker: () => void;
 }
 
 const SearchModal = ({
@@ -16,6 +19,9 @@ const SearchModal = ({
   setShowSearchModal,
   availableOptions,
   setAvailableOptions,
+  lookedUpFoodList,
+  setLookedUpList,
+  setFoodTracker,
 }: SearchModalProps) => {
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +42,14 @@ const SearchModal = ({
 
     if (showSearchModal) searchModal.show();
   }, [showSearchModal]);
+
+  const handleToggle = (foodItem: ShortFDCFoodData) => {
+    if (lookedUpFoodList.includes(foodItem)) {
+      setLookedUpList(lookedUpFoodList.filter((item) => item !== foodItem));
+    } else {
+      setLookedUpList([...lookedUpFoodList, foodItem]);
+    }
+  };
 
   const workableNutrients = extractNutritionalValue(availableOptions);
 
@@ -74,19 +88,23 @@ const SearchModal = ({
               </div>
             </div>
             <div className="modal-body">
-              <div className="container">
+              <div
+                className="container overflow-auto"
+                style={{ maxHeight: "250px" }}
+              >
                 {availableOptions.map((foodItem, index) => {
                   return (
                     <div
                       className="row border-bottom"
-                      onClick={(event) => {
-                        const color = () =>
-                          event.currentTarget.style.background === "aquamarine"
-                            ? "white"
-                            : "aquamarine";
-                        event.currentTarget.style.background = color();
-                      }}
+                      onClick={() => handleToggle(foodItem)}
                       key={foodItem.fdcId}
+                      style={{
+                        background: `${
+                          lookedUpFoodList.includes(foodItem)
+                            ? "aquamarine"
+                            : "white"
+                        }`,
+                      }}
                     >
                       <div className="col">{foodItem.description}</div>
                       <div className="col">
@@ -126,7 +144,11 @@ const SearchModal = ({
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setFoodTracker()}
+              >
                 Save changes
               </button>
             </div>
