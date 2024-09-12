@@ -13,12 +13,14 @@ interface MacroProgress {
 interface AddFoodFormProps {
   setShowSearchModal: () => void;
   foodTracker: ShortFDCFoodData[];
+  setFoodTracker: (list: ShortFDCFoodData[]) => void;
   setMacroProgress: (progress: MacroProgress) => void;
 }
 
 const AddFoodForm = ({
   setShowSearchModal,
   foodTracker,
+  setFoodTracker,
   setMacroProgress,
 }: AddFoodFormProps) => {
   const sumCalories = () => {
@@ -103,6 +105,11 @@ const AddFoodForm = ({
 
   const workAbleNutrients = extractNutritionalValue(foodTracker);
 
+  const removeFoodItem = (foodItem: ShortFDCFoodData) => {
+    const newList = foodTracker.filter((item) => item !== foodItem);
+    setFoodTracker(newList);
+  };
+
   return (
     <div
       className="d-flex flex-column"
@@ -180,24 +187,64 @@ const AddFoodForm = ({
           {foodTracker.map((foodItem, index) => {
             return (
               <div className="row border-bottom" key={foodItem.fdcId}>
-                <div className="col">{foodItem.description}</div>
-                <div className="col">
+                <div className="col-2">
+                  <div className="row">
+                    <div className="col-1">
+                      <button
+                        className="btn btn-close"
+                        style={{
+                          fontSize: "0.75rem",
+                        }}
+                        onClick={() => {
+                          removeFoodItem(foodItem);
+                        }}
+                      ></button>
+                    </div>
+                    <div
+                      className="col text-truncate"
+                      title={foodItem.description}
+                    >
+                      {foodItem.description}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="col text-truncate"
+                  style={{ fontSize: "0.8rem" }}
+                  title={`${workAbleNutrients[index].servingSize.toFixed(2)} g`}
+                >
                   {`Serving: ${workAbleNutrients[index].servingSize.toFixed(
                     2
                   )} g`}
                 </div>
-                <div className="col">
+                <div
+                  className="col text-truncate"
+                  title={`${workAbleNutrients[index].calories.toFixed(2)} kcal`}
+                  style={{ fontSize: "0.8rem" }}
+                >
                   {`Calories: ${workAbleNutrients[index].calories.toFixed(
                     2
                   )} kcal`}
                 </div>
-                <div className="col">
+                <div
+                  className="col text-truncate"
+                  title={`${workAbleNutrients[index].protein.toFixed(2)} g`}
+                  style={{ fontSize: "0.8rem" }}
+                >
                   {`Protein: ${workAbleNutrients[index].protein.toFixed(2)} g`}
                 </div>
-                <div className="col">
+                <div
+                  className="col text-truncate"
+                  title={`${workAbleNutrients[index].fat.toFixed(2)} g`}
+                  style={{ fontSize: "0.8rem" }}
+                >
                   {`Fat: ${workAbleNutrients[index].fat.toFixed(2)} g`}
                 </div>
-                <div className="col">
+                <div
+                  className="col text-truncate"
+                  title={`${workAbleNutrients[index].carbs.toFixed(2)} g`}
+                  style={{ fontSize: "0.8rem" }}
+                >
                   {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)} g`}
                 </div>
               </div>

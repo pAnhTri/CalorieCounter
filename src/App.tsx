@@ -253,8 +253,6 @@ function App() {
   const addItemsToFoodTracker = () => {
     const mergedList = [...new Set([...foodTracker, ...lookedUpFoodList])];
     setFoodTracker(mergedList);
-    // Reset looked up items
-    setLookedUpList([]);
   };
 
   const initialProgress = {
@@ -334,6 +332,7 @@ function App() {
               setShowSearchModal(true);
             }}
             foodTracker={foodTracker}
+            setFoodTracker={setFoodTracker}
             setMacroProgress={(progress: typeof macroProgress) => {
               setMacroProgress(progress);
             }}
@@ -347,6 +346,7 @@ function App() {
             setAvailableOptions={() => {}} //WIP
             lookedUpFoodList={lookedUpFoodList}
             setLookedUpList={setLookedUpList}
+            foodTracker={foodTracker}
             setFoodTracker={addItemsToFoodTracker}
           ></SearchModal>
         </div>

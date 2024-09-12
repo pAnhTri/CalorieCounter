@@ -11,6 +11,7 @@ interface SearchModalProps {
   setAvailableOptions: () => void;
   lookedUpFoodList: ShortFDCFoodData[];
   setLookedUpList: (list: ShortFDCFoodData[]) => void;
+  foodTracker: ShortFDCFoodData[];
   setFoodTracker: () => void;
 }
 
@@ -21,6 +22,7 @@ const SearchModal = ({
   setAvailableOptions,
   lookedUpFoodList,
   setLookedUpList,
+  foodTracker,
   setFoodTracker,
 }: SearchModalProps) => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -44,7 +46,10 @@ const SearchModal = ({
   }, [showSearchModal]);
 
   const handleToggle = (foodItem: ShortFDCFoodData) => {
-    if (lookedUpFoodList.includes(foodItem)) {
+    if (
+      lookedUpFoodList.includes(foodItem) &&
+      !foodTracker.includes(foodItem)
+    ) {
       setLookedUpList(lookedUpFoodList.filter((item) => item !== foodItem));
     } else {
       setLookedUpList([...lookedUpFoodList, foodItem]);
@@ -106,26 +111,31 @@ const SearchModal = ({
                         }`,
                       }}
                     >
-                      <div className="col">{foodItem.description}</div>
-                      <div className="col">
+                      <div
+                        className="col-2 text-truncate"
+                        title={foodItem.description}
+                      >
+                        {foodItem.description}
+                      </div>
+                      <div className="col" style={{ fontSize: "0.8rem" }}>
                         {`Serving: ${workableNutrients[
                           index
                         ].servingSize.toFixed(2)} g`}
                       </div>
-                      <div className="col">
+                      <div className="col" style={{ fontSize: "0.8rem" }}>
                         {`Calories: ${workableNutrients[index].calories.toFixed(
                           2
                         )} kcal`}
                       </div>
-                      <div className="col">
+                      <div className="col" style={{ fontSize: "0.8rem" }}>
                         {`Protein: ${workableNutrients[index].protein.toFixed(
                           2
                         )} g`}
                       </div>
-                      <div className="col">
+                      <div className="col" style={{ fontSize: "0.8rem" }}>
                         {`Fat: ${workableNutrients[index].fat.toFixed(2)} g`}
                       </div>
-                      <div className="col">
+                      <div className="col" style={{ fontSize: "0.8rem" }}>
                         {`Carbs: ${workableNutrients[index].carbs.toFixed(
                           2
                         )} g`}
