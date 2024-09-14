@@ -112,137 +112,9 @@ function App() {
   const [showMacroControl, setShowMacroControl] = useState(false);
 
   // Add Food
-  const foodTrackerTest: ShortFDCFoodData[] = [
-    {
-      description: "Salmon",
-      fdcId: 0,
-      foodNutrients: [
-        {
-          number: "203",
-          name: "Protein",
-          amount: 14.8,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "204",
-          name: "Total lipid (fat)",
-          amount: 12.1,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "205",
-          name: "Carbohydrate, by difference",
-          amount: 10.2,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "208",
-          name: "Energy",
-          amount: 209,
-          unitName: "KCAL",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-      ],
-    },
-    {
-      description: "Tofu",
-      fdcId: 4,
-      foodNutrients: [
-        {
-          number: "203",
-          name: "Protein",
-          amount: 14.8,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "204",
-          name: "Total lipid (fat)",
-          amount: 12.1,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "205",
-          name: "Carbohydrate, by difference",
-          amount: 10.2,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "208",
-          name: "Energy",
-          amount: 214,
-          unitName: "KCAL",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-      ],
-    },
-    {
-      description: "Kimchi",
-      fdcId: 5,
-      foodNutrients: [
-        {
-          number: "203",
-          name: "Protein",
-          amount: 14.8,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "204",
-          name: "Total lipid (fat)",
-          amount: 12.1,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "205",
-          name: "Carbohydrate, by difference",
-          amount: 10.2,
-          unitName: "G",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-        {
-          number: "208",
-          name: "Energy",
-          amount: 216,
-          unitName: "KCAL",
-          derivationCode: "LCGA",
-          derivationDescription:
-            "Given by information provider as an approximate value per 100 unit measure",
-        },
-      ],
-    },
-  ];
-
-  const [availableOptions, setAvailableOptions] =
-    useState<ShortFDCFoodData[]>(foodTrackerTest);
+  const [availableOptions, setAvailableOptions] = useState<ShortFDCFoodData[]>(
+    []
+  );
 
   // Search Modal
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -347,7 +219,7 @@ function App() {
               setShowSearchModal(false);
             }}
             availableOptions={availableOptions}
-            setAvailableOptions={() => {}} //WIP
+            setAvailableOptions={setAvailableOptions}
             lookedUpFoodList={lookedUpFoodList}
             setLookedUpList={setLookedUpList}
             foodTracker={foodTracker}

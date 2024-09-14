@@ -7,9 +7,10 @@ interface ShortFDCFoodData {
   }
   
   interface FDCNutrients {
-    number?: string;
-    name?: string;
-    amount?: number;
+    nutrientId?: number
+    nutrientName?: string;
+    nutrientNumber?: string;
+    value?: number;
     unitName?: string;
     derivationCode?: string;
     derivationDescription?: string;

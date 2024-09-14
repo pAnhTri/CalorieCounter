@@ -10,7 +10,7 @@ interface SearchModalProps {
   showSearchModal: boolean;
   setShowSearchModal: () => void;
   availableOptions: ShortFDCFoodData[];
-  setAvailableOptions: () => void;
+  setAvailableOptions: (list: ShortFDCFoodData[]) => void;
   lookedUpFoodList: ShortFDCFoodData[];
   setLookedUpList: (list: ShortFDCFoodData[]) => void;
   foodTracker: ShortFDCFoodData[];
@@ -38,6 +38,8 @@ const SearchModal = ({
   isLoading,
   setIsLoading,
 }: SearchModalProps) => {
+  const workableNutrients = extractNutritionalValue(availableOptions);
+
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -101,7 +103,16 @@ const SearchModal = ({
                 servingSize,
               })
             );
-            console.log(foodShortInfo); //WIP
+
+            /* Process the units
+             * Standard units should be:
+             * serving size: varying => need to get info from the object property
+             * calories: kcal
+             * protein: g
+             * fat: g
+             * carbs: g
+             */
+            setAvailableOptions(foodShortInfo);
           })
           .catch((error) => {
             console.log(error.message);
@@ -112,8 +123,6 @@ const SearchModal = ({
       }
     }
   }, [isLoading]);
-
-  const workableNutrients = extractNutritionalValue(availableOptions);
 
   return (
     <div>
@@ -158,6 +167,7 @@ const SearchModal = ({
                 style={{ maxHeight: "250px" }}
               >
                 {!isLoading ? (
+                  availableOptions.length > 0 &&
                   availableOptions.map((foodItem, index) => {
                     return (
                       <div
@@ -181,7 +191,9 @@ const SearchModal = ({
                         <div className="col" style={{ fontSize: "0.8rem" }}>
                           {`Serving: ${workableNutrients[
                             index
-                          ].servingSize.toFixed(2)} g`}
+                          ].servingSize.toFixed(2)} ${
+                            workableNutrients[index].servingUnit
+                          }`}
                         </div>
                         <div className="col" style={{ fontSize: "0.8rem" }}>
                           {`Calories: ${workableNutrients[

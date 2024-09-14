@@ -25,16 +25,20 @@ const AddFoodForm = ({
   setLookedUpList,
   setMacroProgress,
 }: AddFoodFormProps) => {
+  const workAbleNutrients = extractNutritionalValue(foodTracker);
+
   const sumCalories = () => {
     const calories = foodTracker.flatMap((item) =>
-      item.foodNutrients?.filter((nutrient) => nutrient.number === "208")
+      item.foodNutrients?.filter(
+        (nutrient) => nutrient.nutrientNumber === "208"
+      )
     );
 
     let sumOfCalories = 0;
 
     for (const calorie of calories) {
       if (calorie) {
-        sumOfCalories += calorie.amount ? calorie.amount : 0;
+        sumOfCalories += calorie.value ? calorie.value : 0;
       }
     }
 
@@ -43,14 +47,16 @@ const AddFoodForm = ({
 
   const sumProtein = () => {
     const proteins = foodTracker.flatMap((item) =>
-      item.foodNutrients?.filter((nutrient) => nutrient.number === "203")
+      item.foodNutrients?.filter(
+        (nutrient) => nutrient.nutrientNumber === "203"
+      )
     );
 
     let sumOfProtein = 0;
 
     for (const protein of proteins) {
       if (protein) {
-        sumOfProtein += protein.amount ? protein.amount : 0;
+        sumOfProtein += protein.value ? protein.value : 0;
       }
     }
 
@@ -59,14 +65,16 @@ const AddFoodForm = ({
 
   const sumFat = () => {
     const fats = foodTracker.flatMap((item) =>
-      item.foodNutrients?.filter((nutrient) => nutrient.number === "204")
+      item.foodNutrients?.filter(
+        (nutrient) => nutrient.nutrientNumber === "204"
+      )
     );
 
     let sumOfFats = 0;
 
     for (const fat of fats) {
       if (fat) {
-        sumOfFats += fat.amount ? fat.amount : 0;
+        sumOfFats += fat.value ? fat.value : 0;
       }
     }
 
@@ -75,14 +83,16 @@ const AddFoodForm = ({
 
   const sumCarbs = () => {
     const carbs = foodTracker.flatMap((item) =>
-      item.foodNutrients?.filter((nutrient) => nutrient.number === "205")
+      item.foodNutrients?.filter(
+        (nutrient) => nutrient.nutrientNumber === "205"
+      )
     );
 
     let sumOfCarbs = 0;
 
     for (const carb of carbs) {
       if (carb) {
-        sumOfCarbs += carb.amount ? carb.amount : 0;
+        sumOfCarbs += carb.value ? carb.value : 0;
       }
     }
 
@@ -104,8 +114,6 @@ const AddFoodForm = ({
 
     setMacroProgress(newMacroProgess);
   }, [foodTracker]);
-
-  const workAbleNutrients = extractNutritionalValue(foodTracker);
 
   const removeFoodItem = (foodItem: ShortFDCFoodData) => {
     const newList = foodTracker.filter((item) => item !== foodItem);
@@ -187,72 +195,79 @@ const AddFoodForm = ({
         }}
       >
         <div className="container">
-          {foodTracker.map((foodItem, index) => {
-            return (
-              <div className="row border-bottom" key={foodItem.fdcId}>
-                <div className="col-2">
-                  <div className="row">
-                    <div className="col-1">
-                      <button
-                        className="btn btn-close"
-                        style={{
-                          fontSize: "0.75rem",
-                        }}
-                        onClick={() => {
-                          removeFoodItem(foodItem);
-                        }}
-                      ></button>
-                    </div>
-                    <div
-                      className="col text-truncate"
-                      title={foodItem.description}
-                    >
-                      {foodItem.description}
+          {foodTracker.length > 0 &&
+            foodTracker.map((foodItem, index) => {
+              return (
+                <div className="row border-bottom" key={foodItem.fdcId}>
+                  <div className="col-2">
+                    <div className="row">
+                      <div className="col-1">
+                        <button
+                          className="btn btn-close"
+                          style={{
+                            fontSize: "0.75rem",
+                          }}
+                          onClick={() => {
+                            removeFoodItem(foodItem);
+                          }}
+                        ></button>
+                      </div>
+                      <div
+                        className="col text-truncate"
+                        title={foodItem.description}
+                      >
+                        {foodItem.description}
+                      </div>
                     </div>
                   </div>
+                  <div
+                    className="col text-truncate"
+                    style={{ fontSize: "0.8rem" }}
+                    title={`${workAbleNutrients[index].servingSize.toFixed(
+                      2
+                    )} g`}
+                  >
+                    {`Serving: ${workAbleNutrients[index].servingSize.toFixed(
+                      2
+                    )} g`}
+                  </div>
+                  <div
+                    className="col text-truncate"
+                    title={`${workAbleNutrients[index].calories.toFixed(
+                      2
+                    )} kcal`}
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    {`Calories: ${workAbleNutrients[index].calories.toFixed(
+                      2
+                    )} kcal`}
+                  </div>
+                  <div
+                    className="col text-truncate"
+                    title={`${workAbleNutrients[index].protein.toFixed(2)} g`}
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    {`Protein: ${workAbleNutrients[index].protein.toFixed(
+                      2
+                    )} g`}
+                  </div>
+                  <div
+                    className="col text-truncate"
+                    title={`${workAbleNutrients[index].fat.toFixed(2)} g`}
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    {`Fat: ${workAbleNutrients[index].fat.toFixed(2)} g`}
+                  </div>
+                  <div
+                    className="col text-truncate"
+                    title={`${workAbleNutrients[index].carbs.toFixed(2)} g`}
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)} g`}
+                  </div>
                 </div>
-                <div
-                  className="col text-truncate"
-                  style={{ fontSize: "0.8rem" }}
-                  title={`${workAbleNutrients[index].servingSize.toFixed(2)} g`}
-                >
-                  {`Serving: ${workAbleNutrients[index].servingSize.toFixed(
-                    2
-                  )} g`}
-                </div>
-                <div
-                  className="col text-truncate"
-                  title={`${workAbleNutrients[index].calories.toFixed(2)} kcal`}
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  {`Calories: ${workAbleNutrients[index].calories.toFixed(
-                    2
-                  )} kcal`}
-                </div>
-                <div
-                  className="col text-truncate"
-                  title={`${workAbleNutrients[index].protein.toFixed(2)} g`}
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  {`Protein: ${workAbleNutrients[index].protein.toFixed(2)} g`}
-                </div>
-                <div
-                  className="col text-truncate"
-                  title={`${workAbleNutrients[index].fat.toFixed(2)} g`}
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  {`Fat: ${workAbleNutrients[index].fat.toFixed(2)} g`}
-                </div>
-                <div
-                  className="col text-truncate"
-                  title={`${workAbleNutrients[index].carbs.toFixed(2)} g`}
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  {`Carbs: ${workAbleNutrients[index].carbs.toFixed(2)} g`}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>
