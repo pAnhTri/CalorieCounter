@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import searchIcon from "../../assets/search.svg";
 import * as bootstrap from "bootstrap";
-import { ShortFDCFoodData } from "../../Data/FDCData";
+import { FDCFoodData, ShortFDCFoodData } from "../../Data/FDCData";
 import { extractNutritionalValue } from "../../Data/ExtractMacroNutrients";
+import FDCApi from "../../Data/FDCAPIKey";
+import axios from "axios";
 
 interface SearchModalProps {
   showSearchModal: boolean;
@@ -13,6 +15,15 @@ interface SearchModalProps {
   setLookedUpList: (list: ShortFDCFoodData[]) => void;
   foodTracker: ShortFDCFoodData[];
   setFoodTracker: () => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
+interface FDCResponse {
+  totalHits: number;
+  currentPage: number;
+  totalPages: number;
+  foods: FDCFoodData[];
 }
 
 const SearchModal = ({
@@ -24,6 +35,8 @@ const SearchModal = ({
   setLookedUpList,
   foodTracker,
   setFoodTracker,
+  isLoading,
+  setIsLoading,
 }: SearchModalProps) => {
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -56,6 +69,50 @@ const SearchModal = ({
     }
   };
 
+  // Call the FDC API to search food nutrient values
+  useEffect(() => {
+    // Make sure that the API call only happens while the search is active
+    if (isLoading) {
+      let query = "";
+
+      if (searchRef.current) {
+        query = searchRef.current.value;
+      }
+
+      if (query) {
+        const serverPath = "https://api.nal.usda.gov/fdc/v1/foods/search";
+        const searchQuery = `?query=${query}&dataType=Branded,Foundation,Survey%20%28FNDDS%29,SR%20Legacy&pageSize=200&sortBy=lowercaseDescription.keyword&sortOrder=asc&api_key=DEMO_KEY`;
+        axios
+          .get(serverPath + searchQuery)
+          .then((response) => {
+            const foodInfo: FDCResponse = response.data;
+            const foodShortInfo: ShortFDCFoodData[] = foodInfo.foods.map(
+              ({
+                fdcId,
+                description,
+                foodNutrients,
+                servingSizeUnit,
+                servingSize,
+              }: FDCFoodData) => ({
+                fdcId,
+                description,
+                foodNutrients,
+                servingSizeUnit,
+                servingSize,
+              })
+            );
+            console.log(foodShortInfo); //WIP
+          })
+          .catch((error) => {
+            console.log(error.message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
+    }
+  }, [isLoading]);
+
   const workableNutrients = extractNutritionalValue(availableOptions);
 
   return (
@@ -78,8 +135,11 @@ const SearchModal = ({
                   />
                 </form>
                 <button
-                  className="btn btn-primary"
+                  className={`btn btn-primary ${isLoading ? "disabled" : ""}`}
                   type="button"
+                  onClick={() => {
+                    setIsLoading(true);
+                  }}
                   style={{
                     backgroundImage: `url(${searchIcon})`,
                     backgroundRepeat: "no-repeat",
@@ -97,52 +157,58 @@ const SearchModal = ({
                 className="container overflow-auto"
                 style={{ maxHeight: "250px" }}
               >
-                {availableOptions.map((foodItem, index) => {
-                  return (
-                    <div
-                      className="row border-bottom"
-                      onClick={() => handleToggle(foodItem)}
-                      key={foodItem.fdcId}
-                      style={{
-                        background: `${
-                          lookedUpFoodList.includes(foodItem)
-                            ? "aquamarine"
-                            : "white"
-                        }`,
-                      }}
-                    >
+                {!isLoading ? (
+                  availableOptions.map((foodItem, index) => {
+                    return (
                       <div
-                        className="col-2 text-truncate"
-                        title={foodItem.description}
+                        className="row border-bottom"
+                        onClick={() => handleToggle(foodItem)}
+                        key={foodItem.fdcId}
+                        style={{
+                          background: `${
+                            lookedUpFoodList.includes(foodItem)
+                              ? "aquamarine"
+                              : "white"
+                          }`,
+                        }}
                       >
-                        {foodItem.description}
+                        <div
+                          className="col-2 text-truncate"
+                          title={foodItem.description}
+                        >
+                          {foodItem.description}
+                        </div>
+                        <div className="col" style={{ fontSize: "0.8rem" }}>
+                          {`Serving: ${workableNutrients[
+                            index
+                          ].servingSize.toFixed(2)} g`}
+                        </div>
+                        <div className="col" style={{ fontSize: "0.8rem" }}>
+                          {`Calories: ${workableNutrients[
+                            index
+                          ].calories.toFixed(2)} kcal`}
+                        </div>
+                        <div className="col" style={{ fontSize: "0.8rem" }}>
+                          {`Protein: ${workableNutrients[index].protein.toFixed(
+                            2
+                          )} g`}
+                        </div>
+                        <div className="col" style={{ fontSize: "0.8rem" }}>
+                          {`Fat: ${workableNutrients[index].fat.toFixed(2)} g`}
+                        </div>
+                        <div className="col" style={{ fontSize: "0.8rem" }}>
+                          {`Carbs: ${workableNutrients[index].carbs.toFixed(
+                            2
+                          )} g`}
+                        </div>
                       </div>
-                      <div className="col" style={{ fontSize: "0.8rem" }}>
-                        {`Serving: ${workableNutrients[
-                          index
-                        ].servingSize.toFixed(2)} g`}
-                      </div>
-                      <div className="col" style={{ fontSize: "0.8rem" }}>
-                        {`Calories: ${workableNutrients[index].calories.toFixed(
-                          2
-                        )} kcal`}
-                      </div>
-                      <div className="col" style={{ fontSize: "0.8rem" }}>
-                        {`Protein: ${workableNutrients[index].protein.toFixed(
-                          2
-                        )} g`}
-                      </div>
-                      <div className="col" style={{ fontSize: "0.8rem" }}>
-                        {`Fat: ${workableNutrients[index].fat.toFixed(2)} g`}
-                      </div>
-                      <div className="col" style={{ fontSize: "0.8rem" }}>
-                        {`Carbs: ${workableNutrients[index].carbs.toFixed(
-                          2
-                        )} g`}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <p className="placeholder-glow">
+                    <span className="placeholder col-12"></span>
+                  </p>
+                )}
               </div>
             </div>
             <div className="modal-footer">
@@ -156,7 +222,7 @@ const SearchModal = ({
               </button>
               <button
                 type="button"
-                className="btn btn-primary"
+                className={`btn btn-primary ${isLoading ? "disabled" : ""}`}
                 onClick={() => setFoodTracker()}
               >
                 Save changes

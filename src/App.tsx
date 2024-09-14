@@ -271,6 +271,9 @@ function App() {
     }
   }, []);
 
+  // For the search query
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <>
       <NavBar
@@ -349,6 +352,8 @@ function App() {
             setLookedUpList={setLookedUpList}
             foodTracker={foodTracker}
             setFoodTracker={addItemsToFoodTracker}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
           ></SearchModal>
         </div>
       )}
