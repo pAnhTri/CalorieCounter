@@ -1,29 +1,58 @@
+// Import from STL
 import { useEffect, useState } from "react";
+
+// Navigation Component
 import NavBar from "./components/NavBar";
-import DiaryForm from "./components/Diary/Form";
+import ActivePage from "./Data/ActivePage";
+
+// Calorie Counter Component
+import AddFoodForm from "./components/CalorieCounter/AddFoodForm";
+import CalorieControlButtons from "./components/CalorieCounter/CalorieControlButtons";
+import CalorieControlForm from "./components/CalorieCounter/CalorieControlForm";
+import DoughnutChart from "./components/CalorieCounter/DoughnutChart";
+import Progress from "./components/CalorieCounter/Progress";
+import SearchModal from "./components/CalorieCounter/SearchModal";
+
+// Profile Component
 import ProfileForm from "./components/Profile/Form";
 import UserData from "./Data/User";
 import List from "./components/Profile/List";
-import ActivePage from "./Data/ActivePage";
 import ProfileAlert from "./components/Profile/Alert";
-import DoughnutChart from "./components/CalorieCounter/DoughnutChart";
-import Progress from "./components/CalorieCounter/Progress";
+
+// Diary Component
+import DiaryForm from "./components/Diary/Form";
+
+// Functions
 import { calculateTDEE } from "./Data/CalculateTDEE";
-import CalorieControlButtons from "./components/CalorieCounter/CalorieControlButtons";
-import CalorieControlForm from "./components/CalorieCounter/CalorieControlForm";
-import AddFoodForm from "./components/CalorieCounter/AddFoodForm";
+
+// Types
 import { ShortFDCFoodData } from "./Data/FDCData";
-import SearchModal from "./components/CalorieCounter/SearchModal";
 
-function App() {
-  // Set the state for the page
-  const [activePage, setActivePage] = useState(ActivePage[0]);
-
-  const switchActivePage = (page: string) => {
-    setActivePage(page);
+const App = () => {
+  // Standard variables
+  // Set default for the macro values
+  //Initial ratio
+  /*
+   * Protein: 20% -> 1g = 4kcal
+   * Fat: 20% -> 1g = 9kcal
+   * Carbs: 60% -> 1g = 4kcal
+   *
+   */
+  const userMacro = {
+    protein: 0.2,
+    fat: 0.2,
+    carbs: 0.6,
+    tdde: 0,
+    goal: 0,
   };
 
-  // User configurations
+  // States
+  // State of the active page
+  const [activePage, setActivePage] = useState(ActivePage[0]);
+
+  // State of the user
+  // User is set based on the available user profile in the local storage
+  // User can initially be an existing user or undefined
   const [user, setUser] = useState<UserData>(() => {
     const userProfileStorage = localStorage.getItem("userProfile");
     let userProfile: UserData;
@@ -33,34 +62,8 @@ function App() {
     return userProfile;
   });
 
-  const updateUser = (updatedUser: UserData) => {
-    setUser(updatedUser);
-  };
-
-  const userMacro = {
-    protein: 0.2,
-    fat: 0.2,
-    carbs: 0.6,
-    tdde: 0,
-    goal: 0,
-  };
-
-  useEffect(() => {
-    const userTDDE = user ? calculateTDEE(user) : 0;
-    setUserDefinedMacros({
-      ...userDefinedMacros,
-      tdde: userTDDE,
-      goal: userTDDE,
-    });
-  }, [user]);
-
-  //Initial ratio
-  /*
-   * Protein: 20% -> 1g = 4kcal
-   * Fat: 20% -> 1g = 9kcal
-   * Carbs: 60% -> 1g = 4kcal
-   */
-
+  // Prevnets the user from losing the initial data if any
+  // Using usermacro from local storage or predefined macros
   const [userDefinedMacros, setUserDefinedMacros] = useState(() => {
     const savedMacros = localStorage.getItem("userMacroGoals");
 
@@ -69,6 +72,7 @@ function App() {
       : userMacro;
     return macros;
   });
+
   const [userDefinedProtein, setUserDefinedProtein] = useState(() => {
     const savedMacros = localStorage.getItem("userMacroGoals");
 
@@ -97,11 +101,35 @@ function App() {
     }
   });
 
+  // Format of height and weight unit state
+  // Decide whether the weight is in kg/ lbs and height in cm/ ft'in''
   const [isWeightInKg, setIsWeightInKg] = useState(false);
   const [isHeightInCm, setIsHeightInCm] = useState(false);
 
-  // Profile User Form
+  // State of the render of the user form
+  // Mount or unmount the user form to update a user's profile
   const [showUserForm, setShowUserForm] = useState(false);
+
+  // Page control effect
+  // Checks immediately after render once (no dependencies)
+  // Effect is default to profile page if there is no user yet
+  useEffect(() => {
+    if (!user) {
+      setActivePage(ActivePage[1]);
+    }
+  }, []);
+
+  // Macros control effect
+  // Dependicies exist, same page is rendered when user exist
+  // Checks for user and calculate TDEE to set goal
+  useEffect(() => {
+    const userTDDE = user ? calculateTDEE(user) : 0;
+    setUserDefinedMacros({
+      ...userDefinedMacros,
+      tdde: userTDDE,
+      goal: userTDDE,
+    });
+  }, [user]);
 
   // Alert
   const [showSuccessfulUpdateAlert, setShowSuccessfulUpdateAlert] =
@@ -136,22 +164,12 @@ function App() {
 
   const [macroProgress, setMacroProgress] = useState(initialProgress);
 
-  // Deafult to profile page if there is no user yet
-  useEffect(() => {
-    if (!user) {
-      setActivePage(ActivePage[1]);
-    }
-  }, []);
-
   // For the search query
   const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
-      <NavBar
-        activePage={activePage}
-        switchActivePage={switchActivePage}
-      ></NavBar>
+      <NavBar activePage={activePage} switchActivePage={setActivePage}></NavBar>
 
       {showSuccessfulUpdateAlert && (
         <ProfileAlert
@@ -248,7 +266,7 @@ function App() {
           <ProfileForm
             showUserForm={showUserForm}
             switchShowUserForm={() => setShowUserForm(!showUserForm)}
-            updateUser={updateUser}
+            updateUser={setUser}
             user={user}
             showSuccessfulProfileAlert={() => {
               setShowSuccessfulUpdateAlert(true);
@@ -260,6 +278,6 @@ function App() {
       )}
     </>
   );
-}
+};
 
 export default App;
