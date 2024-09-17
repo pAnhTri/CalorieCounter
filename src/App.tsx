@@ -62,7 +62,7 @@ const App = () => {
     return userProfile;
   });
 
-  // Prevnets the user from losing the initial data if any
+  // Prevents the user from losing the initial data if any
   // Using usermacro from local storage or predefined macros
   const [userDefinedMacros, setUserDefinedMacros] = useState(() => {
     const savedMacros = localStorage.getItem("userMacroGoals");
@@ -147,14 +147,20 @@ const App = () => {
   // Search Modal
   const [showSearchModal, setShowSearchModal] = useState(false);
 
+  //// search the FoodTracker with list of ShortFDCFoodData type 
   const [foodTracker, setFoodTracker] = useState<ShortFDCFoodData[]>([]);
+
+  //// Set the lookedUp list from ShortFDCFoodData type 
   const [lookedUpFoodList, setLookedUpList] = useState<ShortFDCFoodData[]>([]);
 
+
+  // Add items into the foodTracker, merge into the list if there are items in the list alr 
   const addItemsToFoodTracker = () => {
     const mergedList = [...new Set([...foodTracker, ...lookedUpFoodList])];
     setFoodTracker(mergedList);
   };
 
+  //Default values without user profile 
   const initialProgress = {
     calories: 0,
     proteins: 0,
@@ -162,6 +168,7 @@ const App = () => {
     carbs: 0,
   };
 
+  // Set rendered state to be initialProgress values 
   const [macroProgress, setMacroProgress] = useState(initialProgress);
 
   // For the search query
