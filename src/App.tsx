@@ -46,6 +46,14 @@ const App = () => {
     goal: 0,
   };
 
+  //Default values without user profile
+  const initialProgress = {
+    calories: 0,
+    proteins: 0,
+    fats: 0,
+    carbs: 0,
+  };
+
   // States
   // State of the active page
   const [activePage, setActivePage] = useState(ActivePage[0]);
@@ -110,6 +118,69 @@ const App = () => {
   // Mount or unmount the user form to update a user's profile
   const [showUserForm, setShowUserForm] = useState(false);
 
+  // State of alert Alert
+  // Controls whether the Alert component when updating the user profile is shown or not
+  const [showSuccessfulUpdateAlert, setShowSuccessfulUpdateAlert] =
+    useState(false);
+
+  // Doughnut Chart
+  // State of the doughnut chart formatting
+  // Used to store the user defined dougnut chart render option
+  const [chartOptions, setChartOptions] = useState();
+
+  // State of the additional Macro controls
+  // Mounts and unmounts the macro control form for custom macro goals
+  const [showMacroControl, setShowMacroControl] = useState(false);
+
+  // Search Modal
+  // State of the search modal
+  // Shows and hides the modal for the search component with FDCAPI
+  const [showSearchModal, setShowSearchModal] = useState(false);
+
+  // State of the availble search options
+  // Keeps track of the processed list of returned FDCAPI search call
+  const [availableOptions, setAvailableOptions] = useState<ShortFDCFoodData[]>(
+    []
+  );
+
+  // State of the food tracker
+  // Keeps track of the items added by the user to count the calories and macros
+  const [foodTracker, setFoodTracker] = useState<ShortFDCFoodData[]>([]);
+
+  // State of the looked up items
+  // Keeps track of the items the user wants to add to the food tracker
+  const [lookedUpFoodList, setLookedUpList] = useState<ShortFDCFoodData[]>([]);
+
+  // State of the progress
+  // Set rendered state to be initialProgress values
+  const [macroProgress, setMacroProgress] = useState(initialProgress);
+
+  /**
+   * Adds unique items from a looked-up food list to an existing food tracker.
+   *
+   * This function merges two arrays: `foodTracker` and `lookedUpFoodList`.
+   * It ensures that all items in the final `foodTracker` array are unique by
+   * using a `Set`, which removes any duplicate items. The function then updates
+   * the state of `foodTracker` with the merged list.
+   *
+   * @function
+   * @returns {void} This function does not return a value. It updates the `foodTracker` state.
+   *
+   * @example
+   * // Assume initial state of foodTracker: ['Apple', 'Banana']
+   * // Assume lookedUpFoodList contains: ['Banana', 'Orange']
+   * addItemsToFoodTracker();
+   * // After execution, foodTracker becomes: ['Apple', 'Banana', 'Orange']
+   */
+  const addItemsToFoodTracker = () => {
+    const mergedList = [...new Set([...foodTracker, ...lookedUpFoodList])];
+    setFoodTracker(mergedList);
+  };
+
+  // State of the search modal loading
+  // Ensures that the  user cannotmake additional searches when querying with FDCAPI
+  const [isLoading, setIsLoading] = useState(false);
+
   // Page control effect
   // Checks immediately after render once (no dependencies)
   // Effect is default to profile page if there is no user yet
@@ -131,53 +202,11 @@ const App = () => {
     });
   }, [user]);
 
-  // Alert
-  const [showSuccessfulUpdateAlert, setShowSuccessfulUpdateAlert] =
-    useState(false);
-
-  // Doughnut Chart
-  const [chartOptions, setChartOptions] = useState();
-  const [showMacroControl, setShowMacroControl] = useState(false);
-
-  // Add Food
-  const [availableOptions, setAvailableOptions] = useState<ShortFDCFoodData[]>(
-    []
-  );
-
-  // Search Modal
-  const [showSearchModal, setShowSearchModal] = useState(false);
-
-  //// search the FoodTracker with list of ShortFDCFoodData type 
-  const [foodTracker, setFoodTracker] = useState<ShortFDCFoodData[]>([]);
-
-  //// Set the lookedUp list from ShortFDCFoodData type 
-  const [lookedUpFoodList, setLookedUpList] = useState<ShortFDCFoodData[]>([]);
-
-
-  // Add items into the foodTracker, merge into the list if there are items in the list alr 
-  const addItemsToFoodTracker = () => {
-    const mergedList = [...new Set([...foodTracker, ...lookedUpFoodList])];
-    setFoodTracker(mergedList);
-  };
-
-  //Default values without user profile 
-  const initialProgress = {
-    calories: 0,
-    proteins: 0,
-    fats: 0,
-    carbs: 0,
-  };
-
-  // Set rendered state to be initialProgress values 
-  const [macroProgress, setMacroProgress] = useState(initialProgress);
-
-  // For the search query
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <>
       <NavBar activePage={activePage} switchActivePage={setActivePage}></NavBar>
 
+      {/* Render alert only when user successfully creates profile */}
       {showSuccessfulUpdateAlert && (
         <ProfileAlert
           timeOutAlert={showSuccessfulUpdateAlert}
@@ -185,6 +214,7 @@ const App = () => {
         ></ProfileAlert>
       )}
 
+      {/* Render the calorie counter and required components when a user profile exist and the page is set to the Calorie Counter */}
       {user && activePage === ActivePage[0] && (
         <div>
           <DoughnutChart
@@ -254,9 +284,10 @@ const App = () => {
           ></SearchModal>
         </div>
       )}
-
+      {/* Render DiaryForm whenever user updates */}
       {activePage === ActivePage[2] && <DiaryForm></DiaryForm>}
 
+      {/* Render the user profile if one exists, else, render just a button for the user to add the profile */}
       {activePage === ActivePage[1] && (
         <>
           {user && !showUserForm && (
