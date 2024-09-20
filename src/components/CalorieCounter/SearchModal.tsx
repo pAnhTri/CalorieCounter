@@ -1,23 +1,23 @@
-import { useEffect, useRef } from "react";
+// Import Search icon
 import searchIcon from "../../assets/search.svg";
+
+// Import STL
+import { useEffect, useRef } from "react";
+
+// Import bootstrap types
 import * as bootstrap from "bootstrap";
-import { FDCFoodData, ShortFDCFoodData } from "../../Data/FDCData";
+
+// Import ultility functions
 import { extractNutritionalValue } from "../../Data/ExtractMacroNutrients";
-import FDCApi from "../../Data/FDCAPIKey";
+
+// Import axios for API calls
 import axios from "axios";
 
-interface SearchModalProps {
-  showSearchModal: boolean;
-  setShowSearchModal: () => void;
-  availableOptions: ShortFDCFoodData[];
-  setAvailableOptions: (list: ShortFDCFoodData[]) => void;
-  lookedUpFoodList: ShortFDCFoodData[];
-  setLookedUpList: (list: ShortFDCFoodData[]) => void;
-  foodTracker: ShortFDCFoodData[];
-  setFoodTracker: () => void;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
-}
+// Import type of food data
+import { FDCFoodData, ShortFDCFoodData } from "../../Data/FDCData";
+
+// Import the API key to use
+import FDCApi from "../../Data/FDCAPIKey";
 
 interface FDCResponse {
   totalHits: number;
@@ -26,6 +26,41 @@ interface FDCResponse {
   foods: FDCFoodData[];
 }
 
+interface SearchModalProps {
+  showSearchModal: boolean; // Determines if the modal should be visible
+  setShowSearchModal: () => void; // Function to toggle the modal
+  availableOptions: ShortFDCFoodData[]; // Available food options fetched from the API
+  setAvailableOptions: (list: ShortFDCFoodData[]) => void; // Function to update available options
+  lookedUpFoodList: ShortFDCFoodData[]; // List of searched food items
+  setLookedUpList: (list: ShortFDCFoodData[]) => void; // Function to update the looked-up food list
+  foodTracker: ShortFDCFoodData[]; // User's current food tracker
+  setFoodTracker: () => void; // Function to update the food tracker
+  isLoading: boolean; // Boolean indicating if the data is loading
+  setIsLoading: (loading: boolean) => void; // Function to set the loading state
+}
+
+/**
+ * @component
+ * This component renders a modal that allows users to search for food items and add them to the food tracker.
+ * It communicates with the USDA FoodData Central API to retrieve nutritional information for different foods.
+ * Users can toggle food items and add them to their daily food tracker. The modal dynamically updates based on the search input.
+ *
+ * Dependencies:
+ * - Bootstrap for styling.
+ * - Axios for making API requests.
+ *
+ * Props:
+ * @param {boolean} showSearchModal - Flag to control the visibility of the modal.
+ * @param {function} setShowSearchModal - Function to toggle the visibility of the modal.
+ * @param {ShortFDCFoodData[]} availableOptions - An array of available food options to display.
+ * @param {function} setAvailableOptions - Function to set available food options after API calls.
+ * @param {ShortFDCFoodData[]} lookedUpFoodList - An array of food items the user has searched for.
+ * @param {function} setLookedUpList - Function to update the searched food list.
+ * @param {ShortFDCFoodData[]} foodTracker - Array of food items that the user has added to their daily tracker.
+ * @param {function} setFoodTracker - Function to update the food tracker with selected items.
+ * @param {boolean} isLoading - Boolean indicating if the data is loading.
+ * @param {function} setIsLoading - Function to set the loading state.
+ */
 const SearchModal = ({
   showSearchModal,
   setShowSearchModal,
@@ -38,10 +73,12 @@ const SearchModal = ({
   isLoading,
   setIsLoading,
 }: SearchModalProps) => {
-  const workableNutrients = extractNutritionalValue(availableOptions);
-
+  // Element refs
+  // Reference to the search input element
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // Effects
+  // Adds event listeners for focusing the input when the modal opens and closing the modal when hidden
   useEffect(() => {
     const searchModalEventListener = document.getElementById("searchModal");
     searchModalEventListener?.addEventListener("shown.bs.modal", () => {
@@ -54,22 +91,12 @@ const SearchModal = ({
     });
   }, []);
 
+  // Show or hide the modal based on the `showSearchModal` prop
   useEffect(() => {
     const searchModal = new bootstrap.Modal("#searchModal");
 
     if (showSearchModal) searchModal.show();
   }, [showSearchModal]);
-
-  const handleToggle = (foodItem: ShortFDCFoodData) => {
-    if (
-      lookedUpFoodList.includes(foodItem) &&
-      !foodTracker.includes(foodItem)
-    ) {
-      setLookedUpList(lookedUpFoodList.filter((item) => item !== foodItem));
-    } else {
-      setLookedUpList([...lookedUpFoodList, foodItem]);
-    }
-  };
 
   // Call the FDC API to search food nutrient values
   useEffect(() => {
@@ -123,6 +150,25 @@ const SearchModal = ({
       }
     }
   }, [isLoading]);
+
+  /**
+   * Toggles food items in the lookedUpFoodList and updates the tracker accordingly.
+   *
+   * @param {ShortFDCFoodData} foodItem - The food item to toggle in the list.
+   */
+  const handleToggle = (foodItem: ShortFDCFoodData) => {
+    if (
+      lookedUpFoodList.includes(foodItem) &&
+      !foodTracker.includes(foodItem)
+    ) {
+      setLookedUpList(lookedUpFoodList.filter((item) => item !== foodItem));
+    } else {
+      setLookedUpList([...lookedUpFoodList, foodItem]);
+    }
+  };
+
+  // Extracted nutrient information from the availableOptions using a utility function.
+  const workableNutrients = extractNutritionalValue(availableOptions);
 
   return (
     <div>

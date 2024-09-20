@@ -9,9 +9,9 @@ interface UserMacroStats {
 }
 
 interface CalorieControlButtonsProps {
-  userMacros: UserMacroStats;
-  updateUserDefinedGoals: (macroDelta: number) => void;
-  switchShowMacroControls: () => void;
+  userMacros: UserMacroStats; // User's current macro stats
+  updateUserDefinedGoals: (macroDelta: number) => void; // Function to update calorie goals
+  switchShowMacroControls: () => void; // Function to toggle custom macro controls
 }
 
 const WeightChangeButton = styled.button.attrs(() => ({
@@ -23,6 +23,22 @@ const WeightChangeButton = styled.button.attrs(() => ({
   --bs-btn-hover-bg: #5c5c5c;
 `;
 
+/**
+ * @component
+ * Renders buttons for managing caloric intake goals:
+ * - Lose Weight: Reduces the user's TDEE by 20%.
+ * - Maintain Weight: Keeps the current TDEE.
+ * - Gain Weight: Increases the user's TDEE by 10%.
+ * - Custom Goals: Switches to a custom goal adjustment interface.
+ *
+ * Dependencies:
+ * - Bootstrap for styling.
+ *
+ * Props:
+ * @param {UserMacroStats} userMacros - The user's current macro stats and TDEE.
+ * @param {function} updateUserDefinedGoals - Function to adjust calorie goals based on the button clicked.
+ * @param {function} switchShowMacroControls - Function to toggle the custom macro controls.
+ */
 const CalorieControlButtons = ({
   userMacros,
   updateUserDefinedGoals,

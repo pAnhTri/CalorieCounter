@@ -14,14 +14,32 @@ interface MacroProgress {
 }
 
 interface ProgressProps {
-  userGoals: UserMacroStats;
-  macroProgress: MacroProgress;
+  userGoals: UserMacroStats; // The user's macro goals
+  macroProgress: MacroProgress; // The user's macro progress
 }
 
+/**
+ * @component
+ * This component displays the user's progress toward their macronutrient goals (calories, protein, fat, carbs).
+ * It includes progress bars to visualize how much of each macronutrient has been consumed relative to the user's goals.
+ * The progress bars are color-coded based on progress: red (low), yellow (medium), and green (high).
+ *
+ * Dependencies:
+ * - Bootstrap for styling.
+ *
+ * Props:
+ * @param {UserMacroStats} userGoals - The user's macronutrient goals, including calories, protein, fat, and carbs.
+ * @param {MacroProgress} macroProgress - The user's current macronutrient intake progress.
+ */
 const Progress = ({ userGoals, macroProgress }: ProgressProps) => {
   // Progress bar
   const userTDDEGoals = userGoals.goal;
 
+  /**
+   * Determines the color of the progress bar based on the progress percentage.
+   * @param {number} progress - The current percentage of progress (0 to 100).
+   * @returns {string} The Bootstrap background color class based on progress (bg-danger, bg-warning, bg-success).
+   */
   const progressReport = (progress: number) => {
     let bg = "danger";
     if (progress > 33) bg = "warning";

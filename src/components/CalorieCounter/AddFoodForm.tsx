@@ -1,6 +1,13 @@
+// Import from STL
 import { useEffect } from "react";
+
+// Search icon
 import searchIcon from "../../assets/search.svg";
+
+// Data type
 import { ShortFDCFoodData } from "../../Data/FDCData";
+
+// Utility functions
 import { extractNutritionalValue } from "../../Data/ExtractMacroNutrients";
 
 interface MacroProgress {
@@ -11,13 +18,29 @@ interface MacroProgress {
 }
 
 interface AddFoodFormProps {
-  setShowSearchModal: () => void;
-  foodTracker: ShortFDCFoodData[];
-  setFoodTracker: (list: ShortFDCFoodData[]) => void;
-  setLookedUpList: (list: ShortFDCFoodData[]) => void;
-  setMacroProgress: (progress: MacroProgress) => void;
+  setShowSearchModal: () => void; // Function to show/hide the search modal.
+  foodTracker: ShortFDCFoodData[]; // List of tracked food items containing nutrient information.
+  setFoodTracker: (list: ShortFDCFoodData[]) => void; // Function to update the list of tracked food items.
+  setLookedUpList: (list: ShortFDCFoodData[]) => void; // Function to set a list of searched/filtered food items.
+  setMacroProgress: (progress: MacroProgress) => void; // Function to update the macro progress (calories, proteins, etc.).
 }
 
+/**
+ * @component
+ * This component allows users to add, remove, and track food items in a food tracker.
+ * It calculates and displays macro nutrients (calories, protein, fats, carbs) for each food item
+ * in the `foodTracker` and provides a form to search for new foods.
+ *
+ * Dependencies:
+ * - Bootstrap for styling.
+ *
+ * Props:
+ * @param {function} setShowSearchModal - Function to toggle the visibility of the search modal.
+ * @param {ShortFDCFoodData[]} foodTracker - An array of tracked food items containing nutrient data.
+ * @param {function} setFoodTracker - Function to update the list of tracked food items.
+ * @param {function} setLookedUpList - Function to set the list of looked-up food items.
+ * @param {function} setMacroProgress - Function to update the macro progress (calories, proteins, fats, carbs).
+ */
 const AddFoodForm = ({
   setShowSearchModal,
   foodTracker,
@@ -25,8 +48,11 @@ const AddFoodForm = ({
   setLookedUpList,
   setMacroProgress,
 }: AddFoodFormProps) => {
-  const workAbleNutrients = extractNutritionalValue(foodTracker);
-
+  // Effects
+  /**
+   * Calculates the sum of calories, protein, fats, and carbs from the food items in the `foodTracker`.
+   * Uses a `useEffect` hook to update the macro progress whenever the `foodTracker` changes.
+   */
   const sumCalories = () => {
     const calories = foodTracker.flatMap((item) =>
       item.foodNutrients?.filter(
@@ -98,7 +124,11 @@ const AddFoodForm = ({
 
     return sumOfCarbs;
   };
-
+  /**
+   * useEffect hook that recalculates the macro nutrients whenever the `foodTracker` changes.
+   * It uses the above functions to sum calories, protein, fats, and carbs, and updates the
+   * macro progress by calling `setMacroProgress` with the new values.
+   */
   useEffect(() => {
     const sumOfCalories = sumCalories();
     const sumOfProtein = sumProtein();
@@ -115,6 +145,21 @@ const AddFoodForm = ({
     setMacroProgress(newMacroProgess);
   }, [foodTracker]);
 
+  // Extracted nutrient information from the foodTracker using a utility function.
+  const workAbleNutrients = extractNutritionalValue(foodTracker);
+
+  /**
+   * This function removes a specified food item from the `foodTracker` list. It filters out
+   * the provided `foodItem` from the `foodTracker` array and updates both the `foodTracker`
+   * and the `lookedUpList` state with the new list of items.
+   *
+   * @param {ShortFDCFoodData} foodItem - The food item to be removed from the tracker.
+   *
+   * Steps:
+   * 1. Filters the `foodTracker` array to remove the specified `foodItem`.
+   * 2. Updates the `foodTracker` state with the new list.
+   * 3. Updates the `lookedUpList` state with the new list.
+   */
   const removeFoodItem = (foodItem: ShortFDCFoodData) => {
     const newList = foodTracker.filter((item) => item !== foodItem);
     setFoodTracker(newList);
