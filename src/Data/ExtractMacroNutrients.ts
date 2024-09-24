@@ -1,6 +1,4 @@
 /**
- * Extract Macro Nutrients
- * 
  * This module provides a utility function to extract the macro nutritional values 
  * (calories, protein, fat, carbs) from a list of food data (`foodTracker`). It 
  * filters relevant nutrients from each food item and returns an array of objects 
