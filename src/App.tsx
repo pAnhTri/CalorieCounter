@@ -81,31 +81,21 @@ const App = () => {
     return macros;
   });
 
-  const [userDefinedProtein, setUserDefinedProtein] = useState(() => {
+  const [userMacroNutrients, setUserMacroNutrients] = useState(() => {
     const savedMacros = localStorage.getItem("userMacroGoals");
 
     if (savedMacros) {
-      return JSON.parse(savedMacros).protein;
+      return {
+        protein: JSON.parse(savedMacros).protein,
+        fat: JSON.parse(savedMacros).fat,
+        carbs: JSON.parse(savedMacros).carbs,
+      };
     } else {
-      return 0.2;
-    }
-  });
-  const [userDefinedFat, setUserDefinedFat] = useState(() => {
-    const savedMacros = localStorage.getItem("userMacroGoals");
-
-    if (savedMacros) {
-      return JSON.parse(savedMacros).fat;
-    } else {
-      return 0.2;
-    }
-  });
-  const [userDefinedCarbs, setUserDefinedCarbs] = useState(() => {
-    const savedMacros = localStorage.getItem("userMacroGoals");
-
-    if (savedMacros) {
-      return JSON.parse(savedMacros).carbs;
-    } else {
-      return 0.6;
+      return {
+        protein: 0.2,
+        fat: 0.2,
+        carbs: 0.6,
+      };
     }
   });
 
@@ -246,14 +236,8 @@ const App = () => {
               updateUserTDEE={(macroGoal: typeof userMacro) => {
                 setUserDefinedMacros(macroGoal);
               }}
-              userProtein={userDefinedProtein}
-              updateUserProtein={(protein: number) =>
-                setUserDefinedProtein(protein)
-              }
-              userCarbs={userDefinedCarbs}
-              updateUserCarbs={(carbs: number) => setUserDefinedCarbs(carbs)}
-              userFat={userDefinedFat}
-              updateUserFat={(fat: number) => setUserDefinedFat(fat)}
+              userMacroGoals={userMacroNutrients}
+              updateMacroGoals={setUserMacroNutrients}
               showMacroControl={showMacroControl}
             ></CalorieControlForm>
           )}

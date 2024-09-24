@@ -8,15 +8,17 @@ interface UserMacroStats {
   goal: number;
 }
 
+interface UserDefinedGoals {
+  protein: number;
+  fat: number;
+  carbs: number;
+}
+
 interface CalorieControlFormProps {
   userMacros: UserMacroStats; // The user's current macros and TDEE
   updateUserTDEE: (goal: UserMacroStats) => void; // Function to update the user's TDEE and macro goals
-  userProtein: number; // Current protein ratio
-  updateUserProtein: (protein: number) => void; // Function to update protein ratio
-  userFat: number; // Current fat ratio
-  updateUserFat: (fat: number) => void; // Function to update fat ratio
-  userCarbs: number; // Current carb ratio
-  updateUserCarbs: (carbs: number) => void; // Function to update carb ratio
+  userMacroGoals: UserDefinedGoals; // The user's current macro nutrients (protein, fat, carbs) ratios
+  updateMacroGoals: (updatedGoals: UserDefinedGoals) => void; // Function to update the user's macro nutrients (protein, fat, carbs) ratios
   showMacroControl: boolean; // Determines if the macro control UI should be shown
 }
 
@@ -32,23 +34,15 @@ interface CalorieControlFormProps {
  * Props:
  * @param {UserMacroStats} userMacros - Object containing the user's current macros and goals.
  * @param {function} updateUserTDEE - Function to update the user's TDEE and goals based on the new macronutrient distribution.
- * @param {number} userProtein - The user's current protein percentage (0 to 1).
- * @param {function} updateUserProtein - Function to update the user's protein percentage.
- * @param {number} userFat - The user's current fat percentage (0 to 1).
- * @param {function} updateUserFat - Function to update the user's fat percentage.
- * @param {number} userCarbs - The user's current carbohydrate percentage (0 to 1).
- * @param {function} updateUserCarbs - Function to update the user's carbohydrate percentage.
+ * @param {UserDefinedGoals} userMacroGoals - Object containing the user's current macro nutrients (protein, fat, carbs) percentages (0 to 1).
+ * @param {function} updateMacroGoals - Function to update the user's current macro nutrients (protein, fat, carbs) percentages.
  * @param {boolean} showMacroControl - Boolean flag to determine if the macro controls should be displayed or focused.
  */
 const CalorieControlForm = ({
   userMacros,
   updateUserTDEE,
-  userProtein,
-  updateUserProtein,
-  userFat,
-  updateUserFat,
-  userCarbs,
-  updateUserCarbs,
+  userMacroGoals,
+  updateMacroGoals,
   showMacroControl,
 }: CalorieControlFormProps) => {
   // Element Refs
@@ -60,21 +54,23 @@ const CalorieControlForm = ({
    * Updates the user's macronutrient goals when the sum of protein, fat, and carbs equals 1.
    * It ensures the updated values are used to set the new macronutrient goals.
    */
-  const updateMacroGoals = () => {
-    if (userProtein + userFat + userCarbs === 1) {
+  const updateMacroGoalRatios = () => {
+    if (
+      userMacroGoals.protein + userMacroGoals.fat + userMacroGoals.carbs ===
+      1
+    ) {
       const newGoals: UserMacroStats = {
         ...userMacros,
-        protein: userProtein,
-        fat: userFat,
-        carbs: userCarbs,
+        ...userMacroGoals,
       };
       updateUserTDEE(newGoals);
     }
   };
+
   // Update macronutrient goals when protein, fat, or carbs values change
   useEffect(() => {
-    updateMacroGoals();
-  }, [userProtein, userFat, userCarbs]);
+    updateMacroGoalRatios();
+  }, [userMacroGoals]);
 
   // Save the user's macro goals to localStorage whenever the macros are updated
   useEffect(() => {
@@ -128,13 +124,16 @@ const CalorieControlForm = ({
       </label>
       <input
         onChange={(event) => {
-          updateUserProtein(
-            parseFloat((parseFloat(event.currentTarget.value) / 100).toFixed(2))
-          );
+          updateMacroGoals({
+            ...userMacroGoals,
+            protein: parseFloat(
+              (parseFloat(event.currentTarget.value) / 100).toFixed(2)
+            ),
+          });
         }}
         type="number"
         className="form-control"
-        value={(userProtein * 100).toFixed(0)}
+        value={(userMacroGoals.protein * 100).toFixed(0)}
         style={{
           width: "9ch",
           whiteSpace: "nowrap",
@@ -144,7 +143,10 @@ const CalorieControlForm = ({
       ></input>
       <input
         onChange={(event) => {
-          updateUserProtein(parseFloat(event.currentTarget.value));
+          updateMacroGoals({
+            ...userMacroGoals,
+            protein: parseFloat(event.currentTarget.value),
+          });
         }}
         id="proteinControl"
         type="range"
@@ -152,7 +154,7 @@ const CalorieControlForm = ({
         min={0}
         max={1}
         step={0.01}
-        value={userProtein}
+        value={userMacroGoals.protein}
       />
     </div>
   );
@@ -168,13 +170,16 @@ const CalorieControlForm = ({
       </label>
       <input
         onChange={(event) => {
-          updateUserFat(
-            parseFloat((parseFloat(event.currentTarget.value) / 100).toFixed(2))
-          );
+          updateMacroGoals({
+            ...userMacroGoals,
+            fat: parseFloat(
+              (parseFloat(event.currentTarget.value) / 100).toFixed(2)
+            ),
+          });
         }}
         type="number"
         className="form-control"
-        value={(userFat * 100).toFixed(0)}
+        value={(userMacroGoals.fat * 100).toFixed(0)}
         style={{
           width: "9ch",
           whiteSpace: "nowrap",
@@ -184,7 +189,10 @@ const CalorieControlForm = ({
       ></input>
       <input
         onChange={(event) => {
-          updateUserFat(parseFloat(event.currentTarget.value));
+          updateMacroGoals({
+            ...userMacroGoals,
+            fat: parseFloat(event.currentTarget.value),
+          });
         }}
         id="fatControl"
         type="range"
@@ -192,7 +200,7 @@ const CalorieControlForm = ({
         min={0}
         max={1}
         step={0.01}
-        value={userFat}
+        value={userMacroGoals.fat}
       />
     </div>
   );
@@ -208,13 +216,16 @@ const CalorieControlForm = ({
       </label>
       <input
         onChange={(event) => {
-          updateUserCarbs(
-            parseFloat((parseFloat(event.currentTarget.value) / 100).toFixed(2))
-          );
+          updateMacroGoals({
+            ...userMacroGoals,
+            carbs: parseFloat(
+              (parseFloat(event.currentTarget.value) / 100).toFixed(2)
+            ),
+          });
         }}
         type="number"
         className="form-control"
-        value={(userCarbs * 100).toFixed(0)}
+        value={(userMacroGoals.carbs * 100).toFixed(0)}
         style={{
           width: "9ch",
           whiteSpace: "nowrap",
@@ -224,7 +235,10 @@ const CalorieControlForm = ({
       />
       <input
         onChange={(event) => {
-          updateUserCarbs(parseFloat(event.currentTarget.value));
+          updateMacroGoals({
+            ...userMacroGoals,
+            carbs: parseFloat(event.currentTarget.value),
+          });
         }}
         id="carbsControl"
         type="range"
@@ -232,7 +246,7 @@ const CalorieControlForm = ({
         min={0}
         max={1}
         step={0.01}
-        value={userCarbs}
+        value={userMacroGoals.carbs}
       />
     </div>
   );
