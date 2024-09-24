@@ -9,7 +9,7 @@ interface UserMacroStats {
   protein: number;
   fat: number;
   carbs: number;
-  tdde: number;
+  tdee: number;
   goal: number;
 }
 
@@ -31,7 +31,7 @@ interface DoughnutChartProps {
  * Props:
  * @param {any} doughnutOptions - The configuration options for the Doughnut chart (Chart.js).
  * @param {function} setDoughnutOptions - A function to update the doughnut chart options dynamically.
- * @param {UserMacroStats} userMacros - An object containing the user's macronutrient stats and goals (protein, fats, carbs, tdde, goal).
+ * @param {UserMacroStats} userMacros - An object containing the user's macronutrient stats and goals (protein, fats, carbs, tdee, goal).
  */
 const DoughnutChart = ({
   doughnutOptions,

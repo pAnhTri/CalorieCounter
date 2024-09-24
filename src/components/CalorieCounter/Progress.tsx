@@ -2,7 +2,7 @@ interface UserMacroStats {
   protein: number;
   fat: number;
   carbs: number;
-  tdde: number;
+  tdee: number;
   goal: number;
 }
 
@@ -33,7 +33,7 @@ interface ProgressProps {
  */
 const Progress = ({ userGoals, macroProgress }: ProgressProps) => {
   // Progress bar
-  const userTDDEGoals = userGoals.goal;
+  const userTDEEGoals = userGoals.goal;
 
   /**
    * Determines the color of the progress bar based on the progress percentage.
@@ -47,10 +47,10 @@ const Progress = ({ userGoals, macroProgress }: ProgressProps) => {
     return bg;
   };
 
-  const calorieProgress = (macroProgress.calories / userTDDEGoals) * 100;
-  const proteinProgress = (macroProgress.proteins / userTDDEGoals) * 100;
-  const fatProgress = (macroProgress.fats / userTDDEGoals) * 100;
-  const carbsProgress = (macroProgress.carbs / userTDDEGoals) * 100;
+  const calorieProgress = (macroProgress.calories / userTDEEGoals) * 100;
+  const proteinProgress = (macroProgress.proteins / userTDEEGoals) * 100;
+  const fatProgress = (macroProgress.fats / userTDEEGoals) * 100;
+  const carbsProgress = (macroProgress.carbs / userTDEEGoals) * 100;
 
   return (
     <div className="d-flex flex-column">
@@ -68,7 +68,7 @@ const Progress = ({ userGoals, macroProgress }: ProgressProps) => {
           </span>
           <span className={`text-${progressReport(calorieProgress)} mx-1`}>
             {" "}
-            {`(${macroProgress.calories.toFixed(2)}/${userTDDEGoals.toFixed(
+            {`(${macroProgress.calories.toFixed(2)}/${userTDEEGoals.toFixed(
               2
             )}) kcal`}{" "}
           </span>

@@ -4,7 +4,7 @@ interface UserMacroStats {
   protein: number;
   fat: number;
   carbs: number;
-  tdde: number;
+  tdee: number;
   goal: number;
 }
 
@@ -51,7 +51,7 @@ const CalorieControlButtons = ({
           style={{ flex: "1 1 0" }}
           type="button"
           onClick={() => {
-            updateUserDefinedGoals(-(userMacros.tdde * 0.2));
+            updateUserDefinedGoals(-(userMacros.tdee * 0.2));
           }}
         >
           Lose Weight
@@ -70,7 +70,7 @@ const CalorieControlButtons = ({
           style={{ flex: "1 1 0" }}
           type="button"
           onClick={() => {
-            updateUserDefinedGoals(userMacros.tdde * 0.1);
+            updateUserDefinedGoals(userMacros.tdee * 0.1);
           }}
         >
           Gain Weight

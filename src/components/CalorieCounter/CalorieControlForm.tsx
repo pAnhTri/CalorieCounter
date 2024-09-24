@@ -4,13 +4,13 @@ interface UserMacroStats {
   protein: number;
   fat: number;
   carbs: number;
-  tdde: number;
+  tdee: number;
   goal: number;
 }
 
 interface CalorieControlFormProps {
   userMacros: UserMacroStats; // The user's current macros and TDEE
-  updateUserTDDE: (goal: UserMacroStats) => void; // Function to update the user's TDEE and macro goals
+  updateUserTDEE: (goal: UserMacroStats) => void; // Function to update the user's TDEE and macro goals
   userProtein: number; // Current protein ratio
   updateUserProtein: (protein: number) => void; // Function to update protein ratio
   userFat: number; // Current fat ratio
@@ -31,7 +31,7 @@ interface CalorieControlFormProps {
  *
  * Props:
  * @param {UserMacroStats} userMacros - Object containing the user's current macros and goals.
- * @param {function} updateUserTDDE - Function to update the user's TDEE and goals based on the new macronutrient distribution.
+ * @param {function} updateUserTDEE - Function to update the user's TDEE and goals based on the new macronutrient distribution.
  * @param {number} userProtein - The user's current protein percentage (0 to 1).
  * @param {function} updateUserProtein - Function to update the user's protein percentage.
  * @param {number} userFat - The user's current fat percentage (0 to 1).
@@ -42,7 +42,7 @@ interface CalorieControlFormProps {
  */
 const CalorieControlForm = ({
   userMacros,
-  updateUserTDDE,
+  updateUserTDEE,
   userProtein,
   updateUserProtein,
   userFat,
@@ -68,7 +68,7 @@ const CalorieControlForm = ({
         fat: userFat,
         carbs: userCarbs,
       };
-      updateUserTDDE(newGoals);
+      updateUserTDEE(newGoals);
     }
   };
   // Update macronutrient goals when protein, fat, or carbs values change
@@ -104,7 +104,7 @@ const CalorieControlForm = ({
       <input
         ref={calorieControlReference}
         onChange={(event) => {
-          updateUserTDDE({
+          updateUserTDEE({
             ...userMacros,
             goal: parseFloat(event.currentTarget.value),
           });

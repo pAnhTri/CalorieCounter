@@ -42,7 +42,7 @@ const App = () => {
     protein: 0.2,
     fat: 0.2,
     carbs: 0.6,
-    tdde: 0,
+    tdee: 0,
     goal: 0,
   };
 
@@ -194,11 +194,11 @@ const App = () => {
   // Dependicies exist, same page is rendered when user exist
   // Checks for user and calculate TDEE to set goal
   useEffect(() => {
-    const userTDDE = user ? calculateTDEE(user) : 0;
+    const userTDEE = user ? calculateTDEE(user) : 0;
     setUserDefinedMacros({
       ...userDefinedMacros,
-      tdde: userTDDE,
-      goal: userTDDE,
+      tdee: userTDEE,
+      goal: userTDEE,
     });
   }, [user]);
 
@@ -233,7 +233,7 @@ const App = () => {
             updateUserDefinedGoals={(deltaMacro: number) => {
               setUserDefinedMacros({
                 ...userDefinedMacros,
-                goal: userDefinedMacros.tdde + deltaMacro,
+                goal: userDefinedMacros.tdee + deltaMacro,
               });
             }}
             switchShowMacroControls={() =>
@@ -243,7 +243,7 @@ const App = () => {
           {showMacroControl && (
             <CalorieControlForm
               userMacros={userDefinedMacros}
-              updateUserTDDE={(macroGoal: typeof userMacro) => {
+              updateUserTDEE={(macroGoal: typeof userMacro) => {
                 setUserDefinedMacros(macroGoal);
               }}
               userProtein={userDefinedProtein}
