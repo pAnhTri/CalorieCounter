@@ -1,4 +1,3 @@
-import React from "react";
 import UserData from "../../Data/User";
 import ExerciseLevel from "../../Data/ExerciseLevel";
 import styled from "styled-components";

@@ -110,7 +110,7 @@ const SearchModal = ({
 
       if (query) {
         const serverPath = "https://api.nal.usda.gov/fdc/v1/foods/search";
-        const searchQuery = `?query=${query}&dataType=Branded,Foundation,Survey%20%28FNDDS%29,SR%20Legacy&pageSize=200&sortBy=lowercaseDescription.keyword&sortOrder=asc&api_key=DEMO_KEY`;
+        const searchQuery = `?query=${query}&dataType=Branded,Foundation,Survey%20%28FNDDS%29,SR%20Legacy&pageSize=200&sortBy=lowercaseDescription.keyword&sortOrder=asc&api_key=${FDCApi}`;
         axios
           .get(serverPath + searchQuery)
           .then((response) => {

@@ -1,5 +1,3 @@
-import React from "react";
-
 interface NavBarProps {
   activePage: string;
   switchActivePage: (page: string) => void;

@@ -1,5 +1,4 @@
-import React from "react";
-import { set, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ExerciseLevel from "../../Data/ExerciseLevel";
 import { FieldValues, useForm } from "react-hook-form";
