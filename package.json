@@ -2,6 +2,9 @@
   "name": "calorie-counter",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "20.18.0"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
